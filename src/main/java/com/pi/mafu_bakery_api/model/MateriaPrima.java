@@ -25,5 +25,5 @@ public class MateriaPrima {
     private BigDecimal preco;
     @Column(nullable = false)
     private Double quantidadeEstoque;
-    private Boolean status;
+    private Boolean ativo;
 }

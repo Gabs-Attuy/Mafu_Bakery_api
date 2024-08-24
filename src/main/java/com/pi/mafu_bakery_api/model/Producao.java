@@ -18,7 +18,7 @@ public class Producao {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(nullable = false)
-    private int quantidadeProduzida;
+    private Integer quantidadeProduzida;
     @Column(nullable = false)
     private Date dataProducao;
     @OneToOne
