@@ -9,9 +9,7 @@ import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -22,6 +20,7 @@ public class Credencial implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(unique = true)
     private String email;
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String senha;
@@ -30,22 +29,22 @@ public class Credencial implements UserDetails {
     private Boolean isCredentialsNonExpired;
     private Boolean isEnabled;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinTable(name = "permissao_usuario", joinColumns = {@JoinColumn(name = "credencial_id")},
             inverseJoinColumns = {@JoinColumn(name = "usuario_id")})
-    private List<Permissao> permissoes;
+    private Permissao permissao;
 
-    public List<String> getRoles() {
-        List<String> roles = new ArrayList<>();
-        for (Permissao permissao : permissoes) {
-            roles.add(permissao.getDescricao().name());
-        }
-        return roles;
-    }
+//    public List<String> getRoles() {
+//        List<String> roles = new ArrayList<>();
+//        for (Permissao permissao : permissoes) {
+//            roles.add(permissao.getDescricao().name());
+//        }
+//        return roles;
+//    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.permissoes;
+        return (Collection<? extends GrantedAuthority>) this.permissao;
     }
 
     @Override
