@@ -22,5 +22,5 @@ public class Usuario {
     @Column(nullable = false, unique = true)
     private String celular;
     @OneToOne(mappedBy = "usuario_id", cascade = CascadeType.ALL)
-    private Carrinho carrrinho;
+    private Carrinho carrinho;
 }
