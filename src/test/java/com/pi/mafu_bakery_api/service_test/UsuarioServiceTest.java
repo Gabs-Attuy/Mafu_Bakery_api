@@ -1,9 +1,12 @@
 package com.pi.mafu_bakery_api.service_test;
 
+import com.pi.mafu_bakery_api.dto.CadastroUsuarioDTO;
 import com.pi.mafu_bakery_api.enums.PermissaoEnum;
 import com.pi.mafu_bakery_api.model.Credencial;
 import com.pi.mafu_bakery_api.model.Permissao;
 import com.pi.mafu_bakery_api.model.Usuario;
+import com.pi.mafu_bakery_api.repository.UsuarioRepository;
+import com.pi.mafu_bakery_api.service.UsuarioService;
 import org.junit.jupiter.api.Test;
 import org.mockito.verification.VerificationMode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +37,7 @@ public class UsuarioServiceTest {
 
         CadastroUsuarioDTO usuarioDTO = new CadastroUsuarioDTO();
         usuarioDTO.setNome("Joao");
-        usuarioDTO.setCPF("48436782879");
+        usuarioDTO.setCpf("48436782879");
         usuarioDTO.setEmail("joao123@gmail.com");
         usuarioDTO.setSenha("joao123");
 
@@ -50,7 +53,7 @@ public class UsuarioServiceTest {
         when(usuarioRepository.save(any(Usuario.class))).thenReturn(usuario);
 
         // Chamar o método a ser testado
-        Usuario usuarioSalvo = usuarioService.cadastrarUsuario(usuarioDTO);
+        Usuario usuarioSalvo = usuarioService.(usuarioDTO);
 
         // Verificar o resultado
         assertEquals("João Silva", usuarioSalvo.getNome());

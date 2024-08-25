@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Collection;
 
@@ -28,23 +29,17 @@ public class Credencial implements UserDetails {
     private Boolean isAccountNonLocked;
     private Boolean isCredentialsNonExpired;
     private Boolean isEnabled;
+    @OneToOne
+    @JoinColumn(name = "usuario_id")
+    private Usuario usuario;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinTable(name = "permissao_usuario", joinColumns = {@JoinColumn(name = "credencial_id")},
-            inverseJoinColumns = {@JoinColumn(name = "usuario_id")})
-    private Permissao permissao;
-
-//    public List<String> getRoles() {
-//        List<String> roles = new ArrayList<>();
-//        for (Permissao permissao : permissoes) {
-//            roles.add(permissao.getDescricao().name());
-//        }
-//        return roles;
-//    }
+    public static String encryptPassword(String password){
+        return new BCryptPasswordEncoder().encode(password);
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return (Collection<? extends GrantedAuthority>) this.permissao;
+        return null;
     }
 
     @Override

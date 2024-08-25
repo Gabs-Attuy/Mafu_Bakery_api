@@ -18,6 +18,7 @@ public class CadastroUsuarioDTO {
     @CPF
     @Column(nullable = false)
     private String cpf;
+    private String celular;
     @Email
     @Column(nullable = false)
     private String email;
