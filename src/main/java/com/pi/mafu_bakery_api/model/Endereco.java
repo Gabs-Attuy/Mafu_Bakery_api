@@ -28,8 +28,5 @@ public class Endereco {
     @Column(nullable = false)
     private String numero;
     private String complemento;
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "usuario_endereco", joinColumns = {@JoinColumn(name = "endereco_id")},
-            inverseJoinColumns = {@JoinColumn(name = "usuario_id")})
-    private List<Endereco> enderecos;
+
 }
