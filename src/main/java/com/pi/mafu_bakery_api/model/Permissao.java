@@ -11,6 +11,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 
+import java.util.Optional;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter @Setter
@@ -21,6 +23,9 @@ public class Permissao implements GrantedAuthority {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private PermissaoEnum descricao;
+
+    public Permissao(Optional<Usuario> usuarioRecuperado, PermissaoEnum permissaoEnum) {
+    }
 
     @Override
     public String getAuthority() {
