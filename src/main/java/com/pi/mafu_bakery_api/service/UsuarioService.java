@@ -1,5 +1,6 @@
 package com.pi.mafu_bakery_api.service;
 
+import com.pi.mafu_bakery_api.dto.AlteracaoUsuarioDTO;
 import com.pi.mafu_bakery_api.dto.CadastroUsuarioDTO;
 import com.pi.mafu_bakery_api.enums.PermissaoEnum;
 import com.pi.mafu_bakery_api.key.PermissaoUsuarioKey;
@@ -9,6 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+import java.util.List;
 
 import static com.pi.mafu_bakery_api.model.Credencial.encryptPassword;
 
@@ -30,14 +34,13 @@ public class UsuarioService {
     @Autowired
     PermissaoUsuarioRepository permissaoUsuarioRepository;
 
-    public ResponseEntity<Usuario> cadastrarUsuario(CadastroUsuarioDTO dto) throws Exception {
+    public ResponseEntity<Usuario> cadastrarCliente(CadastroUsuarioDTO dto) throws Exception {
 
         Usuario usuario = new Usuario();
         Credencial credencial = new Credencial();
 
         usuario.setNome(dto.getNome());
         usuario.setCpf(dto.getCpf());
-        usuario.setCelular(dto.getCelular());
         usuarioRepository.save(usuario);
 
         Usuario id = usuarioRepository.findById(usuario.getId()).orElseThrow(() -> new Exception("NÃO ENCONTRADO"));
@@ -56,7 +59,7 @@ public class UsuarioService {
         Permissao permissao = new Permissao();
         Long localizarPermissao = permissaoRepository.findPermissaoById(1L).getId();
         permissao.setId(localizarPermissao);
-        permissao.setDescricao(PermissaoEnum.USUARIO_COMUM);
+        permissao.setDescricao(PermissaoEnum.CLIENTE);
 
         PermissaoUsuarioKey permissaoUsuariokey = new PermissaoUsuarioKey(permissao, usuario);
         PermissaoUsuario permissaoUsuario = new PermissaoUsuario();
@@ -64,5 +67,33 @@ public class UsuarioService {
         permissaoUsuarioRepository.save(permissaoUsuario);
 
         return new ResponseEntity<>(usuario, HttpStatus.CREATED);
+
+    }
+
+    public ResponseEntity<List<Usuario>> recuperaTodosUsuarios() {
+
+        return new ResponseEntity<>(usuarioRepository.findAll(), HttpStatus.OK);
+
+    }
+
+    public ResponseEntity<Credencial> alterarSenha(Long id, AlteracaoUsuarioDTO dto) throws Exception {
+
+        Credencial credencial = credencialRepository.findByUsuarioId(id);
+
+        if(credencial != null) {
+            if(dto.getSenha() != null && dto.getConfirmaSenha() != null) {
+                if (new BCryptPasswordEncoder().matches(dto.getSenha(), credencial.getSenha())){
+                    return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+                }
+                if (dto.getSenha().equals(dto.getConfirmaSenha())) {
+                    credencial.setSenha(encryptPassword(dto.getSenha()));
+                    credencialRepository.save(credencial);
+                    return new ResponseEntity<>(credencial, HttpStatus.OK);
+                }
+            }
+        }
+
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
     }
 }
