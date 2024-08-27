@@ -19,8 +19,6 @@ public class Usuario {
     private String nome;
     @Column(nullable = false, unique = true)
     private String cpf;
-    @Column(nullable = false, unique = true)
-    private String celular;
     @OneToOne(mappedBy = "usuario_id", cascade = CascadeType.ALL)
     private Carrinho carrinho;
 }
