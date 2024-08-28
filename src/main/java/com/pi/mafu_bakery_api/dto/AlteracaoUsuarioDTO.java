@@ -1,6 +1,5 @@
 package com.pi.mafu_bakery_api.dto;
 
-import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

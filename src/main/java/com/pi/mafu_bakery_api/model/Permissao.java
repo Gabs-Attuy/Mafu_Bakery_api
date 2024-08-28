@@ -1,16 +1,14 @@
 package com.pi.mafu_bakery_api.model;
 
-import com.pi.mafu_bakery_api.enums.PermissaoEnum;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.pi.mafu_bakery_api.enums.RoleEnum;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 
+import java.util.List;
 import java.util.Optional;
 
 @NoArgsConstructor
@@ -22,13 +20,14 @@ public class Permissao implements GrantedAuthority {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private PermissaoEnum descricao;
+    @Enumerated(EnumType.STRING)
+    private RoleEnum permissao;
 
-    public Permissao(Optional<Usuario> usuarioRecuperado, PermissaoEnum permissaoEnum) {
+    public Permissao(Optional<Usuario> usuarioRecuperado, RoleEnum permissaoEnum) {
     }
 
     @Override
     public String getAuthority() {
-        return this.descricao.name();
+        return this.permissao.name();
     }
 }
