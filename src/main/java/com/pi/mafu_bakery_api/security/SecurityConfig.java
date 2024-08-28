@@ -31,6 +31,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/usuario").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/signin").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/usuario").permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();

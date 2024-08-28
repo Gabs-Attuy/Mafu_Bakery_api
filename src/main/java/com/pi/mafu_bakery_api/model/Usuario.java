@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter @Setter
@@ -21,4 +23,5 @@ public class Usuario {
     private String cpf;
     @OneToOne(mappedBy = "usuario_id", cascade = CascadeType.ALL)
     private Carrinho carrinho;
+
 }

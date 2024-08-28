@@ -1,20 +1,17 @@
 package com.pi.mafu_bakery_api.service_test;
 
 import com.pi.mafu_bakery_api.dto.CadastroUsuarioDTO;
-import com.pi.mafu_bakery_api.enums.PermissaoEnum;
+import com.pi.mafu_bakery_api.enums.RoleEnum;
 import com.pi.mafu_bakery_api.model.Credencial;
 import com.pi.mafu_bakery_api.model.Permissao;
 import com.pi.mafu_bakery_api.model.Usuario;
 import com.pi.mafu_bakery_api.repository.UsuarioRepository;
 import com.pi.mafu_bakery_api.service.UsuarioService;
 import org.junit.jupiter.api.Test;
-import org.mockito.verification.VerificationMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
-
-import java.util.Properties;
 
 import static jdk.internal.org.objectweb.asm.util.CheckClassAdapter.verify;
 import static org.hamcrest.Matchers.any;
@@ -48,7 +45,7 @@ public class UsuarioServiceTest {
         usuario.setCpf("48436782879");
         credencial.setEmail("joao123@gmail.com");
         credencial.setSenha("joao123");
-        credencial.setPermissao(new Permissao(1L, PermissaoEnum.USUARIO_COMUM));
+        credencial.setPermissao(new Permissao(1L, RoleEnum.CLIENTE));
 
         when(usuarioRepository.save(any(Usuario.class))).thenReturn(usuario);
 

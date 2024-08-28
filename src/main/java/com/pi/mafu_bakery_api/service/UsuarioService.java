@@ -2,7 +2,8 @@ package com.pi.mafu_bakery_api.service;
 
 import com.pi.mafu_bakery_api.dto.AlteracaoUsuarioDTO;
 import com.pi.mafu_bakery_api.dto.CadastroUsuarioDTO;
-import com.pi.mafu_bakery_api.enums.PermissaoEnum;
+import com.pi.mafu_bakery_api.dto.ListaUsuariosDTO;
+import com.pi.mafu_bakery_api.enums.RoleEnum;
 import com.pi.mafu_bakery_api.key.PermissaoUsuarioKey;
 import com.pi.mafu_bakery_api.model.*;
 import com.pi.mafu_bakery_api.repository.*;
@@ -59,7 +60,7 @@ public class UsuarioService {
         Permissao permissao = new Permissao();
         Long localizarPermissao = permissaoRepository.findPermissaoById(1L).getId();
         permissao.setId(localizarPermissao);
-        permissao.setDescricao(PermissaoEnum.CLIENTE);
+        permissao.setPermissao(RoleEnum.CLIENTE);
 
         PermissaoUsuarioKey permissaoUsuariokey = new PermissaoUsuarioKey(permissao, usuario);
         PermissaoUsuario permissaoUsuario = new PermissaoUsuario();
@@ -72,13 +73,14 @@ public class UsuarioService {
 
     public ResponseEntity<List<Usuario>> recuperaTodosUsuarios() {
 
+//        return new ResponseEntity<>(usuarioRepository.listarUsuarios(), HttpStatus.OK);
         return new ResponseEntity<>(usuarioRepository.findAll(), HttpStatus.OK);
 
     }
 
     public ResponseEntity<Credencial> alterarSenha(Long id, AlteracaoUsuarioDTO dto) throws Exception {
 
-        Credencial credencial = credencialRepository.findByUsuarioId(id);
+        Credencial credencial = credencialRepository.findByIdUsuario(id);
 
         if(credencial != null) {
             if(dto.getSenha() != null && dto.getConfirmaSenha() != null) {
