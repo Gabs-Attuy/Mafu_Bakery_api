@@ -32,6 +32,9 @@ public class Credencial implements UserDetails {
     @OneToOne
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;
+    @ManyToOne
+    @JoinColumn(name="permissao_id", nullable=false)
+    private Permissao permissao;
 
     public static String encryptPassword(String password){
         return new BCryptPasswordEncoder().encode(password);

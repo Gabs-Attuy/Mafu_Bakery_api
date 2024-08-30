@@ -8,10 +8,9 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
-//    @Query("SELECT new com.pi.mafu_bakery_api.dto.ListaUsuariosDTO(u.nome, c.email, c.isEnabled, p.descricao) " +
-//            "FROM Usuario u " +
-//            "JOIN Credencial c ON c.usuario.id = u.id " +
-//            "JOIN PermissaoUsuario pu ON pu.usuario.id = u.id " +
-//            "JOIN Permissao p ON p.id = pu.permissao.id")
-//    List<ListaUsuariosDTO> listarUsuarios();
+    @Query("SELECT new com.pi.mafu_bakery_api.dto.ListaUsuariosDTO(u.nome, c.email, c.isEnabled, p.permissao) " +
+            "FROM Usuario u " +
+            "JOIN u.credencial c " +
+            "JOIN c.permissao p")
+    List<ListaUsuariosDTO> listarUsuarios();
 }
