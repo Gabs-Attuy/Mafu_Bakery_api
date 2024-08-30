@@ -22,6 +22,8 @@ public class Permissao implements GrantedAuthority {
     private Long id;
     @Enumerated(EnumType.STRING)
     private RoleEnum permissao;
+    @OneToMany(mappedBy = "permissao")
+    private List<Credencial> credencial;
 
     public Permissao(Optional<Usuario> usuarioRecuperado, RoleEnum permissaoEnum) {
     }

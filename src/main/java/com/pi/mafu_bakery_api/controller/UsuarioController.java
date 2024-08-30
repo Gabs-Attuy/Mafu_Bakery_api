@@ -27,7 +27,7 @@ public class UsuarioController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Usuario>> recuperaTodosUsuarios() {
+    public ResponseEntity<List<ListaUsuariosDTO>> recuperaTodosUsuarios() {
         return usuarioService.recuperaTodosUsuarios();
     }
 
