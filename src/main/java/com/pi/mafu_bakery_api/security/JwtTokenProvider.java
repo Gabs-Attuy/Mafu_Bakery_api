@@ -3,6 +3,8 @@ package com.pi.mafu_bakery_api.security;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.pi.mafu_bakery_api.dto.TokenDTO;
+import com.pi.mafu_bakery_api.enums.RoleEnum;
+import com.pi.mafu_bakery_api.repository.CredencialRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,9 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.auth0.jwt.JWT;
 
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
 @Service
@@ -28,19 +27,24 @@ public class JwtTokenProvider {
     @Autowired
     private UserDetailsService userDetailsService;
 
+    @Autowired
+    private CredencialRepository credencialRepository;
+
     public TokenDTO createAccessToken(String email) {
+        //TODO: Fazer a conversão das datas com o Fuso Horário do BR.
         Date now = new Date();
         Date validity = new Date(now.getTime() + validityToken);
-        var accessToken = generateToken(email, now, validity);
+        RoleEnum permissao = credencialRepository.findPermissaoByEmail(email);
+        var accessToken = generateToken(email, permissao, now, validity);
 
-        return new TokenDTO(email, true, now, validity, accessToken);
+        return new TokenDTO(email, true, permissao, now, validity, accessToken);
     }
 
-    private String generateToken(String email, Date now, Date validity) {
+    private String generateToken(String email, RoleEnum permissao, Date now, Date validity) {
         String issuerUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
         Algorithm algorithm = Algorithm.HMAC512(secretKey);
         return JWT.create()
-                .withClaim("Permissão", "TESTE")
+                .withClaim("Permissão", permissao.name())
                 .withIssuedAt(now)
                 .withExpiresAt(validity)
                 .withIssuer(issuerUrl)
