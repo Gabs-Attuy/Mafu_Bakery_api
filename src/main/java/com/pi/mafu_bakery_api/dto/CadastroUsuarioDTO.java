@@ -1,5 +1,6 @@
 package com.pi.mafu_bakery_api.dto;
 
+import com.pi.mafu_bakery_api.enums.RoleEnum;
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
@@ -23,5 +24,7 @@ public class CadastroUsuarioDTO {
     private String email;
     @Column(nullable = false)
     private String senha;
+    @Column(nullable = false)
+    private RoleEnum permissao;
 
 }
