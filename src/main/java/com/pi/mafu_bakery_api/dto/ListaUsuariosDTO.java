@@ -11,6 +11,7 @@ import lombok.Setter;
 @Getter @Setter
 public class ListaUsuariosDTO {
 
+    private Long id;
     private String nome;
     private String email;
     private Boolean isEnabled;
