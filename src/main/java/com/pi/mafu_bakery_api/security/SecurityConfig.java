@@ -38,9 +38,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/api/usuario").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/cliente").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/api/ativaDesativaUsuario").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/signin").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api").permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .cors(withDefaults()); // Adiciona suporte a CORS

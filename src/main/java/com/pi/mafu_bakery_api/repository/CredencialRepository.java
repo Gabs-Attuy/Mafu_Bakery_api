@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface CredencialRepository extends JpaRepository<Credencial, Long> {
-    @Query("SELECT u FROM Credencial u WHERE u.usuario = ?1")
+    @Query("SELECT c FROM Credencial c WHERE c.usuario.id = ?1")
     Credencial findByIdUsuario(Long id);
 
     @Query("SELECT u FROM Credencial u WHERE u.email = ?1")
