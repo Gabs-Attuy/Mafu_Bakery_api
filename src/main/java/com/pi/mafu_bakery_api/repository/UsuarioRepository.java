@@ -1,6 +1,7 @@
 package com.pi.mafu_bakery_api.repository;
 
 import com.pi.mafu_bakery_api.dto.ListaUsuariosDTO;
+import com.pi.mafu_bakery_api.model.Credencial;
 import com.pi.mafu_bakery_api.model.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -13,4 +14,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
             "JOIN u.credencial c " +
             "JOIN c.permissao p")
     List<ListaUsuariosDTO> listarUsuarios();
+
+    @Query("SELECT u FROM Usuario u WHERE u.cpf = ?1")
+    Usuario buscaPorCPF(String cpf);
 }
