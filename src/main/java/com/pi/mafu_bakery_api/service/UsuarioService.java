@@ -53,7 +53,7 @@ public class UsuarioService {
         credencialRepository.save(credencial);
 
         Carrinho carrinho = new Carrinho();
-        carrinho.setUsuario_id(usuario); // Use o objeto de usuário
+        carrinho.setUsuario_id(usuario);
         carrinho.setQuantidadeItens(0);
         carrinhoRepository.save(carrinho);
 
@@ -82,6 +82,24 @@ public class UsuarioService {
                     return new ResponseEntity<>(credencial, HttpStatus.OK);
                 }
             }
+        }
+
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+    }
+
+    public ResponseEntity<?> ativaDesativaUsuario(Long id) throws Exception {
+
+        Credencial credencial = credencialRepository.findByIdUsuario(id);
+
+        if(credencial != null) {
+            if(credencial.getIsEnabled()){
+                credencial.setIsEnabled(false);
+            } else {
+                credencial.setIsEnabled(true);
+            }
+            credencialRepository.save(credencial);
+            return new ResponseEntity<>(HttpStatus.OK);
         }
 
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);

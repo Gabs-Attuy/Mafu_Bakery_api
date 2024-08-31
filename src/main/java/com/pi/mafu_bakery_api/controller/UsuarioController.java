@@ -37,4 +37,9 @@ public class UsuarioController {
         return usuarioService.alterarSenha(id, dto);
     }
 
+    @PutMapping("/ativaDesativaUsuario")
+    public ResponseEntity<?> ativaDesativaUsuario(@RequestParam ("id") Long id) throws Exception {
+        return usuarioService.ativaDesativaUsuario(id);
+    }
+
 }
