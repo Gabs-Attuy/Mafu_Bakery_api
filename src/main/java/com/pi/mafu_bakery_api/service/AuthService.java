@@ -27,7 +27,7 @@ public class AuthService {
     public ResponseEntity<?> authentication(CredenciaisContaDTO dto) throws Exception {
 
         try {
-            Credencial usuario = credencialRepository.findByUsuario(dto.getEmail());
+            Credencial usuario = credencialRepository.findUsuarioByEmail(dto.getEmail());
             if(passwordEncoder.matches(dto.getSenha(), usuario.getSenha())) {
                 var tokenResponse = new TokenDTO();
                 tokenResponse = tokenProvider.createAccessToken(usuario.getEmail());

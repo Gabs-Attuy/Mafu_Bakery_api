@@ -16,7 +16,7 @@ public class CredencialService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Credencial credencial = credencialRepository.findByUsuario(email);
+        Credencial credencial = credencialRepository.findUsuarioByEmail(email);
         if(credencial != null) {
             return credencial;
         }
