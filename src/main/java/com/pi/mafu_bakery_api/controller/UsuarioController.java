@@ -49,7 +49,6 @@ public class UsuarioController {
         return usuarioService.ativaDesativaUsuario(id);
     }
 
-
     @PutMapping("/alterarUsuario")
     public ResponseEntity<Usuario> alterarUsuario(@RequestParam ("email") String email,
                                                   @RequestBody AlteracaoDTO dto, HttpServletRequest request) throws Exception{
