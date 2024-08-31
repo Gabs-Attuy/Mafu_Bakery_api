@@ -1,11 +1,14 @@
 package com.pi.mafu_bakery_api.service;
 
+import com.pi.mafu_bakery_api.dto.AlteracaoDTO;
 import com.pi.mafu_bakery_api.dto.AlteracaoUsuarioDTO;
 import com.pi.mafu_bakery_api.dto.CadastroUsuarioDTO;
 import com.pi.mafu_bakery_api.dto.ListaUsuariosDTO;
 import com.pi.mafu_bakery_api.enums.RoleEnum;
 import com.pi.mafu_bakery_api.model.*;
 import com.pi.mafu_bakery_api.repository.*;
+import com.pi.mafu_bakery_api.security.JwtTokenProvider;
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,7 +16,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import javax.management.relation.Role;
 import java.util.List;
+import java.util.Objects;
 
 import static com.pi.mafu_bakery_api.model.Credencial.encryptPassword;
 
@@ -31,6 +36,9 @@ public class UsuarioService {
 
     @Autowired
     private PermissaoRepository permissaoRepository;
+
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
 
     public ResponseEntity<Usuario> cadastrarCliente(CadastroUsuarioDTO dto) throws Exception {
 
@@ -113,5 +121,52 @@ public class UsuarioService {
         }
 
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+
+    public ResponseEntity<Usuario> alterarUsuario(String  email, AlteracaoDTO dto, HttpServletRequest request) throws Exception {
+
+        String emailAutenticado = jwtTokenProvider.validateToken(jwtTokenProvider.resolveToken(request));
+
+        if (emailAutenticado == null || emailAutenticado.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+
+        Credencial credencial = credencialRepository.findUsuarioByEmail(email);
+        Usuario usuario = usuarioRepository.findById(credencial.getId()).orElseThrow( () -> new Exception("usuario nao encontrado"));
+        Permissao permissao = new Permissao();
+        RoleEnum roleEnum = RoleEnum.valueOf(String.valueOf(dto.getPermissao()));
+
+
+        if(usuario != null){
+            usuario.setNome(dto.getNome());
+            if(dto.getCpf() != null && !dto.getCpf().equals(usuario.getCpf())){
+                Usuario usuarioExistente = usuarioRepository.buscaPorCPF(dto.getCpf());
+                if(usuarioExistente != null && !usuarioExistente.getId().equals(usuario.getId())){
+                    return new ResponseEntity<>(HttpStatus.CONFLICT);
+                }
+            }
+            usuario.setCpf(dto.getCpf());
+
+            if(emailAutenticado.equals(email))
+                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            else
+                permissao.setPermissao(roleEnum);
+
+            if (roleEnum == RoleEnum.ADMINISTRADOR)
+                permissao.setId(1L);
+            else
+                permissao.setId(2L);
+
+            credencial.setPermissao(permissao);
+
+            usuarioRepository.save(usuario);
+            credencialRepository.save(credencial);
+
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
     }
 }
