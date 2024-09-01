@@ -15,15 +15,15 @@ public class AuthController {
     private AuthService authService;
 
     @PostMapping(value = "/signin")
-    public ResponseEntity signin(@RequestBody CredenciaisContaDTO data) throws Exception {
-        if (checkIfParamsIsNotNull(data))
+    public ResponseEntity<?> signin(@RequestBody CredenciaisContaDTO data) throws Exception {
+        if (checaSeOsParametrosSaoNulos(data))
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid client request!");
-        var token = authService.authentication(data);
+        var token = authService.autenticacao(data);
         if (token == null) return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid client request!");
         return token;
     }
 
-    private boolean checkIfParamsIsNotNull(CredenciaisContaDTO data) {
+    private boolean checaSeOsParametrosSaoNulos(CredenciaisContaDTO data) {
         return data == null || data.getEmail() == null || data.getEmail().isBlank()
                 || data.getSenha() == null || data.getSenha().isBlank();
     }
