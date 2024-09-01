@@ -1,4 +1,4 @@
-name: CI/CD Pipeline for Backend
+name: Deploy Backend
 
 on:
   push:
@@ -6,23 +6,24 @@ on:
       - main
 
 jobs:
-  backend-build:
+  build-and-deploy:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Setup Java 21 for Backend
+      - name: Set up Java 21
         uses: actions/setup-java@v3
         with:
           java-version: '21'
+          distribution: 'temurin' # Adicione este campo para especificar a distribuição do JDK
 
-      - name: Build Backend with Maven
+      - name: Build with Maven
         run: |
-          cd backend
           mvn clean install
 
-      - name: Deploy Backend to Azure VM
+      - name: Deploy to Azure VM
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.AZURE_VM_IP }}
