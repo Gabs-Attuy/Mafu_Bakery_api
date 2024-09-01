@@ -7,7 +7,7 @@ import com.pi.mafu_bakery_api.dto.ListaUsuariosDTO;
 import com.pi.mafu_bakery_api.enums.RoleEnum;
 import com.pi.mafu_bakery_api.model.*;
 import com.pi.mafu_bakery_api.repository.*;
-import com.pi.mafu_bakery_api.security.JwtTokenProvider;
+import com.pi.mafu_bakery_api.security.ProvedorTokenJWT;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -32,10 +32,7 @@ public class UsuarioService {
     private CarrinhoRepository carrinhoRepository;
 
     @Autowired
-    private PermissaoRepository permissaoRepository;
-
-    @Autowired
-    private JwtTokenProvider jwtTokenProvider;
+    private ProvedorTokenJWT provedorTokenJWT;
 
     public ResponseEntity<Usuario> cadastrarCliente(CadastroUsuarioDTO dto) throws Exception {
 
@@ -123,7 +120,7 @@ public class UsuarioService {
 
     public ResponseEntity<Usuario> alterarUsuario(String  email, AlteracaoDTO dto, HttpServletRequest request) throws Exception {
 
-        String emailAutenticado = jwtTokenProvider.validateToken(jwtTokenProvider.resolveToken(request));
+        String emailAutenticado = provedorTokenJWT.validaToken(provedorTokenJWT.preparaHeaderToken(request));
 
         if (emailAutenticado == null || emailAutenticado.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);

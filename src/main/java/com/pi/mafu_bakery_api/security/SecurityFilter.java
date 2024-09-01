@@ -21,25 +21,25 @@ import java.util.Collections;
 public class SecurityFilter extends GenericFilterBean {
 
     @Autowired
-    private JwtTokenProvider tokenProvider;
+    private ProvedorTokenJWT tokenProvider;
 
     @Autowired
     private CredencialRepository credencialRepository;
 
-    public SecurityFilter(JwtTokenProvider tokenProvider) {
+    public SecurityFilter(ProvedorTokenJWT tokenProvider) {
         this.tokenProvider = tokenProvider;
     }
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
         try {
-            var token = tokenProvider.resolveToken((HttpServletRequest) request);
-            var auth = tokenProvider.validateToken(token);
+            var token = tokenProvider.preparaHeaderToken((HttpServletRequest) request);
+            var auth = tokenProvider.validaToken(token);
 
             if(auth != null) {
-                Credencial user = credencialRepository.findUsuarioByEmail(auth);
-                var authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
-                var authentication = new UsernamePasswordAuthenticationToken(user, null, authorities);
+                Credencial credencial = credencialRepository.findUsuarioByEmail(auth);
+                var autorizacao = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
+                var authentication = new UsernamePasswordAuthenticationToken(credencial, null, autorizacao);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
 

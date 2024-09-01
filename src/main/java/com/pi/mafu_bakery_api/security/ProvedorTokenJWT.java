@@ -16,7 +16,7 @@ import com.auth0.jwt.JWT;
 import java.util.Date;
 
 @Service
-public class JwtTokenProvider {
+public class ProvedorTokenJWT {
 
     @Value("${api.token.secret.key}")
     private String secretKey = "secret";
@@ -30,17 +30,17 @@ public class JwtTokenProvider {
     @Autowired
     private CredencialRepository credencialRepository;
 
-    public TokenDTO createAccessToken(String email) {
+    public TokenDTO criarTokenAcesso(String email) {
         //TODO: Fazer a conversão das datas com o Fuso Horário do BR.
         Date now = new Date();
         Date validity = new Date(now.getTime() + validityToken);
         RoleEnum permissao = credencialRepository.findPermissaoByEmail(email);
-        var accessToken = generateToken(email, permissao, now, validity);
+        var accessToken = gerarToken(email, permissao, now, validity);
 
         return new TokenDTO(email, true, permissao, now, validity, accessToken);
     }
 
-    private String generateToken(String email, RoleEnum permissao, Date now, Date validity) {
+    private String gerarToken(String email, RoleEnum permissao, Date now, Date validity) {
         String issuerUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
         Algorithm algorithm = Algorithm.HMAC512(secretKey);
         return JWT.create()
@@ -52,7 +52,7 @@ public class JwtTokenProvider {
                 .sign(algorithm);
     }
 
-    public String validateToken(String token) {
+    public String validaToken(String token) {
         if (token == null || token.trim().isEmpty()) {
             return null;
         }
@@ -70,7 +70,7 @@ public class JwtTokenProvider {
         }
     }
 
-    public String resolveToken(HttpServletRequest req) {
+    public String preparaHeaderToken(HttpServletRequest req) {
         String header = req.getHeader("Authorization");
         if(header == null) return null;
         return header.replace("Bearer ", "");
