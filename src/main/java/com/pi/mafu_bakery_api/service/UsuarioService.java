@@ -5,6 +5,7 @@ import com.pi.mafu_bakery_api.dto.AlteracaoUsuarioDTO;
 import com.pi.mafu_bakery_api.dto.CadastroUsuarioDTO;
 import com.pi.mafu_bakery_api.dto.ListaUsuariosDTO;
 import com.pi.mafu_bakery_api.enums.RoleEnum;
+import com.pi.mafu_bakery_api.interfaces.IUsuarioService;
 import com.pi.mafu_bakery_api.model.*;
 import com.pi.mafu_bakery_api.repository.*;
 import com.pi.mafu_bakery_api.security.ProvedorTokenJWT;
@@ -20,7 +21,7 @@ import java.util.List;
 import static com.pi.mafu_bakery_api.model.Credencial.encryptPassword;
 
 @Service
-public class UsuarioService {
+public class UsuarioService implements IUsuarioService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
