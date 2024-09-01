@@ -2,6 +2,7 @@ package com.pi.mafu_bakery_api.service;
 
 import com.pi.mafu_bakery_api.dto.CredenciaisContaDTO;
 import com.pi.mafu_bakery_api.dto.TokenDTO;
+import com.pi.mafu_bakery_api.interfaces.IAuthService;
 import com.pi.mafu_bakery_api.model.Credencial;
 import com.pi.mafu_bakery_api.repository.CredencialRepository;
 import com.pi.mafu_bakery_api.security.ProvedorTokenJWT;
@@ -15,7 +16,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class AuthService {
+public class AuthService implements IAuthService {
 
     @Autowired
     private AuthenticationManager authenticationManager;
