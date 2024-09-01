@@ -1,13 +1,16 @@
 package com.pi.mafu_bakery_api.service;
 
+import com.pi.mafu_bakery_api.dto.AlteracaoDTO;
 import com.pi.mafu_bakery_api.dto.AlteracaoUsuarioDTO;
 import com.pi.mafu_bakery_api.dto.CadastroUsuarioDTO;
 import com.pi.mafu_bakery_api.dto.ListaUsuariosDTO;
 import com.pi.mafu_bakery_api.enums.RoleEnum;
+import com.pi.mafu_bakery_api.interfaces.IUsuarioService;
 import com.pi.mafu_bakery_api.model.*;
 import com.pi.mafu_bakery_api.repository.*;
 import jakarta.transaction.Transactional;
-import org.apache.coyote.Response;
+import com.pi.mafu_bakery_api.security.ProvedorTokenJWT;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +22,7 @@ import java.util.List;
 import static com.pi.mafu_bakery_api.model.Credencial.encryptPassword;
 
 @Service
-public class UsuarioService {
+public class UsuarioService implements IUsuarioService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
@@ -31,7 +34,7 @@ public class UsuarioService {
     private CarrinhoRepository carrinhoRepository;
 
     @Autowired
-    private PermissaoRepository permissaoRepository;
+    private ProvedorTokenJWT provedorTokenJWT;
 
     @Transactional
     public ResponseEntity<Usuario> cadastrarUsuario(CadastroUsuarioDTO dto) throws Exception {
@@ -51,7 +54,7 @@ public class UsuarioService {
 
         RoleEnum roleEnum = RoleEnum.valueOf(String.valueOf(dto.getPermissao()));
         Permissao permissao = permissaoRepository.findPermissaoByNome(String.valueOf(roleEnum));
-
+      
         credencial.setPermissao(permissao);
         credencialRepository.save(credencial);
         return new ResponseEntity<>(HttpStatus.CREATED);
@@ -115,5 +118,70 @@ public class UsuarioService {
         }
 
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+
+    public ResponseEntity<Usuario> alterarUsuario(String  email, AlteracaoDTO dto, HttpServletRequest request) throws Exception {
+
+        String emailAutenticado = provedorTokenJWT.validaToken(provedorTokenJWT.preparaHeaderToken(request));
+
+        if (emailAutenticado == null || emailAutenticado.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+
+        Credencial credencial = credencialRepository.findUsuarioByEmail(email);
+        Usuario usuario = usuarioRepository.findById(credencial.getId()).orElseThrow( () -> new Exception("usuario nao encontrado"));
+        Permissao permissao = new Permissao();
+        RoleEnum roleEnum = RoleEnum.valueOf(String.valueOf(dto.getPermissao()));
+
+
+        if(usuario != null){
+            usuario.setNome(dto.getNome());
+            if(dto.getCpf() != null && !dto.getCpf().equals(usuario.getCpf())){
+                Usuario usuarioExistente = usuarioRepository.buscaPorCPF(dto.getCpf());
+                if(usuarioExistente != null && !usuarioExistente.getId().equals(usuario.getId())){
+                    return new ResponseEntity<>(HttpStatus.CONFLICT);
+                }
+            }
+            usuario.setCpf(dto.getCpf());
+
+            if(emailAutenticado.equals(email))
+                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            else
+                permissao.setPermissao(roleEnum);
+
+            if (roleEnum == RoleEnum.ADMINISTRADOR)
+                permissao.setId(1L);
+            else
+                permissao.setId(2L);
+
+            credencial.setPermissao(permissao);
+
+            usuarioRepository.save(usuario);
+            credencialRepository.save(credencial);
+
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+    }
+
+    public ResponseEntity<?> ativaDesativaUsuario(Long id) throws Exception {
+
+        Credencial credencial = credencialRepository.findByIdUsuario(id);
+
+        if(credencial != null) {
+            if(credencial.getIsEnabled()){
+                credencial.setIsEnabled(false);
+            } else {
+                credencial.setIsEnabled(true);
+            }
+            credencialRepository.save(credencial);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
     }
 }

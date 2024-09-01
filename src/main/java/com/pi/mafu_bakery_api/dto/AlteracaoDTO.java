@@ -5,18 +5,15 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.Date;
+import org.hibernate.validator.constraints.br.CPF;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter @Setter
-public class TokenDTO {
-
-    private String email;
-    private Boolean autenticado;
+@Getter
+@Setter
+public class AlteracaoDTO {
+    private String nome;
+    @CPF
+    private String cpf;
     private RoleEnum permissao;
-    private Date dataCriacao;
-    private Date dataExpiracao;
-    private String tokenAcesso;
 }

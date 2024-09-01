@@ -2,9 +2,10 @@ package com.pi.mafu_bakery_api.service;
 
 import com.pi.mafu_bakery_api.dto.CredenciaisContaDTO;
 import com.pi.mafu_bakery_api.dto.TokenDTO;
+import com.pi.mafu_bakery_api.interfaces.IAuthService;
 import com.pi.mafu_bakery_api.model.Credencial;
 import com.pi.mafu_bakery_api.repository.CredencialRepository;
-import com.pi.mafu_bakery_api.security.JwtTokenProvider;
+import com.pi.mafu_bakery_api.security.ProvedorTokenJWT;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,22 +16,22 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class AuthService {
+public class AuthService implements IAuthService {
 
     @Autowired
     private AuthenticationManager authenticationManager;
 
     private final CredencialRepository credencialRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final JwtTokenProvider tokenProvider;
+    private final PasswordEncoder encriptadorSenha;
+    private final ProvedorTokenJWT provedorTokenJWT;
 
-    public ResponseEntity<?> authentication(CredenciaisContaDTO dto) throws Exception {
+    public ResponseEntity<?> autenticacao(CredenciaisContaDTO dto) throws Exception {
 
         try {
-            Credencial usuario = credencialRepository.findByUsuario(dto.getEmail());
-            if(passwordEncoder.matches(dto.getSenha(), usuario.getSenha())) {
+            Credencial usuario = credencialRepository.findUsuarioByEmail(dto.getEmail());
+            if(encriptadorSenha.matches(dto.getSenha(), usuario.getSenha())) {
                 var tokenResponse = new TokenDTO();
-                tokenResponse = tokenProvider.createAccessToken(usuario.getEmail());
+                tokenResponse = provedorTokenJWT.criarTokenAcesso(usuario.getEmail());
                 return ResponseEntity.ok(tokenResponse);
             }
         } catch (Exception e) {
