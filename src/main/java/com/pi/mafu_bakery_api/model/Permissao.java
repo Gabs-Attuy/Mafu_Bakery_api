@@ -30,6 +30,6 @@ public class Permissao implements GrantedAuthority {
 
     @Override
     public String getAuthority() {
-        return this.permissao.name();
+        return this.permissao.getDescricao();
     }
 }
