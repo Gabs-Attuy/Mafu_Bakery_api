@@ -9,10 +9,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Collection;
+import java.util.Collections;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -45,7 +47,8 @@ public class Credencial implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        // Retorna a permissão do usuário como uma coleção de GrantedAuthority
+        return Collections.singletonList(new SimpleGrantedAuthority(permissao.getAuthority()));
     }
 
     @Override

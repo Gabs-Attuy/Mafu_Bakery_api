@@ -52,9 +52,16 @@ public class UsuarioService implements IUsuarioService {
         credencial.setEmail(dto.getEmail());
         credencial.setSenha(encryptPassword(dto.getSenha()));
 
+//        RoleEnum roleEnum = RoleEnum.valueOf(String.valueOf(dto.getPermissao()));
+//        Permissao permissao = permissaoRepository.findPermissaoByNome(String.valueOf(dto.getPermissao()));
+        Permissao permissao = new Permissao();
         RoleEnum roleEnum = RoleEnum.valueOf(String.valueOf(dto.getPermissao()));
-        Permissao permissao = permissaoRepository.findPermissaoByNome(String.valueOf(roleEnum));
-      
+        permissao.setPermissao(roleEnum);
+
+        if (roleEnum == RoleEnum.ADMINISTRADOR)
+            permissao.setId(1L);
+        else
+            permissao.setId(2L);
         credencial.setPermissao(permissao);
         credencialRepository.save(credencial);
         return new ResponseEntity<>(HttpStatus.CREATED);
@@ -98,6 +105,20 @@ public class UsuarioService implements IUsuarioService {
     public ResponseEntity<List<ListaUsuariosDTO>> recuperaTodosUsuarios() {
 
         return new ResponseEntity<>(usuarioRepository.listarUsuarios(), HttpStatus.OK);
+    }
+
+    public ResponseEntity<List<ListaUsuariosDTO>> recuperaUsuariosPorPesquisa(String nome) {
+
+        return new ResponseEntity<>(usuarioRepository.listarUsuariosPorNome(nome), HttpStatus.OK);
+
+    }
+
+    public ResponseEntity<List<Produto>> listarProdutos() throws Exception {
+        return null;
+    }
+
+    public ResponseEntity<List<Pedido>> listarPedidos() throws Exception {
+        return null;
     }
 
     public ResponseEntity<Credencial> alterarSenha(Long id, AlteracaoUsuarioDTO dto) throws Exception {

@@ -38,7 +38,7 @@ public class SecurityFilter extends GenericFilterBean {
 
             if(auth != null) {
                 Credencial credencial = credencialRepository.findUsuarioByEmail(auth);
-                var autorizacao = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
+                var autorizacao = credencial.getAuthorities();
                 var authentication = new UsernamePasswordAuthenticationToken(credencial, null, autorizacao);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
