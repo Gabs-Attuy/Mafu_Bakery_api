@@ -29,6 +29,10 @@ public class AuthService implements IAuthService {
 
         try {
             Credencial usuario = credencialRepository.findUsuarioByEmail(dto.getEmail());
+
+            if(!usuario.getIsEnabled())
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
             if(encriptadorSenha.matches(dto.getSenha(), usuario.getSenha())) {
                 var tokenResponse = new TokenDTO();
                 tokenResponse = provedorTokenJWT.criarTokenAcesso(usuario.getEmail());

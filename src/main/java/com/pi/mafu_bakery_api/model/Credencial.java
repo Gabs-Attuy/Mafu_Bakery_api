@@ -9,10 +9,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Collection;
+import java.util.Collections;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -27,10 +29,10 @@ public class Credencial implements UserDetails {
     private String email;
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String senha;
-    private Boolean isAccountNonExpired;
-    private Boolean isAccountNonLocked;
-    private Boolean isCredentialsNonExpired;
-    private Boolean isEnabled;
+    private Boolean isAccountNonExpired = true;
+    private Boolean isAccountNonLocked = true;
+    private Boolean isCredentialsNonExpired = true;
+    private Boolean isEnabled = true;
     @OneToOne
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;
@@ -38,13 +40,15 @@ public class Credencial implements UserDetails {
     @JoinColumn(name="permissao_id", nullable=false)
     private Permissao permissao;
 
+    //TODO: Verifcar o porque os atributos do security estao sendo enviados como nulos para o banco
     public static String encryptPassword(String password){
         return new BCryptPasswordEncoder().encode(password);
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        // Retorna a permissão do usuário como uma coleção de GrantedAuthority
+        return Collections.singletonList(new SimpleGrantedAuthority(permissao.getAuthority()));
     }
 
     @Override
@@ -59,21 +63,21 @@ public class Credencial implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return Boolean.TRUE.equals(this.isAccountNonExpired);
+        return this.isAccountNonExpired;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return Boolean.TRUE.equals(this.isAccountNonLocked);
+        return this.isAccountNonLocked;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return Boolean.TRUE.equals(this.isCredentialsNonExpired);
+        return this.isCredentialsNonExpired;
     }
 
     @Override
     public boolean isEnabled() {
-        return Boolean.TRUE.equals(this.isEnabled);
+        return this.isEnabled;
     }
 }

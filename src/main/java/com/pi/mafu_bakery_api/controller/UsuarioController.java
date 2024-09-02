@@ -1,10 +1,9 @@
 package com.pi.mafu_bakery_api.controller;
 
-import com.pi.mafu_bakery_api.dto.AlteracaoDTO;
-import com.pi.mafu_bakery_api.dto.AlteracaoUsuarioDTO;
-import com.pi.mafu_bakery_api.dto.CadastroUsuarioDTO;
-import com.pi.mafu_bakery_api.dto.ListaUsuariosDTO;
+import com.pi.mafu_bakery_api.dto.*;
 import com.pi.mafu_bakery_api.model.Credencial;
+import com.pi.mafu_bakery_api.model.Pedido;
+import com.pi.mafu_bakery_api.model.Produto;
 import com.pi.mafu_bakery_api.model.Usuario;
 import com.pi.mafu_bakery_api.service.UsuarioService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -38,6 +37,16 @@ public class UsuarioController {
         return usuarioService.recuperaTodosUsuarios();
     }
 
+    @GetMapping("/listarProdutos")
+    public ResponseEntity<List<Produto>> listarProdutos() throws Exception {
+        return usuarioService.listarProdutos();
+    }
+
+    @GetMapping("/listarPedidos")
+    public ResponseEntity<List<Pedido>> listarPedidos() throws Exception {
+        return usuarioService.listarPedidos();
+    }
+
     @PutMapping("/alterarSenha")
     public ResponseEntity<Credencial> alterarSenhaUsuario(@RequestParam ("id") Long id,
                                                           @RequestBody AlteracaoUsuarioDTO dto) throws Exception {
@@ -55,4 +64,13 @@ public class UsuarioController {
         return usuarioService.alterarUsuario(email, dto, request);
     }
 
+    @GetMapping("/usuarioLogado")
+    public ResponseEntity<UsuarioLogadoDTO> usuarioLogado(@RequestParam ("email") String email) throws Exception {
+        return usuarioService.recuperaUsuarioPorEmail(email);
+    }
+
+    @GetMapping("/usuariosPorPesquisa")
+    public ResponseEntity<List<ListaUsuariosDTO>> recuperaTodosUsuarios(String nome) {
+        return usuarioService.recuperaUsuariosPorPesquisa(nome);
+    }
 }
