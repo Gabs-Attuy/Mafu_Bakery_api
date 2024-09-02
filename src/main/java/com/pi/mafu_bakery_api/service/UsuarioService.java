@@ -1,9 +1,6 @@
 package com.pi.mafu_bakery_api.service;
 
-import com.pi.mafu_bakery_api.dto.AlteracaoDTO;
-import com.pi.mafu_bakery_api.dto.AlteracaoUsuarioDTO;
-import com.pi.mafu_bakery_api.dto.CadastroUsuarioDTO;
-import com.pi.mafu_bakery_api.dto.ListaUsuariosDTO;
+import com.pi.mafu_bakery_api.dto.*;
 import com.pi.mafu_bakery_api.enums.RoleEnum;
 import com.pi.mafu_bakery_api.interfaces.IUsuarioService;
 import com.pi.mafu_bakery_api.model.*;
@@ -35,6 +32,9 @@ public class UsuarioService implements IUsuarioService {
 
     @Autowired
     private ProvedorTokenJWT provedorTokenJWT;
+
+    @Autowired
+    private PermissaoRepository permissaoRepository;
 
     @Transactional
     public ResponseEntity<Usuario> cadastrarUsuario(CadastroUsuarioDTO dto) throws Exception {
@@ -80,7 +80,7 @@ public class UsuarioService implements IUsuarioService {
         credencial.setUsuario(id);
         credencial.setEmail(dto.getEmail());
         credencial.setSenha(encryptPassword(dto.getSenha()));
-        credencial.setEnabled(true);
+        credencial.setIsEnabled(true);
         Permissao permissao = new Permissao();
         permissao.setId(3L);
         permissao.setPermissao(RoleEnum.CLIENTE);
@@ -170,7 +170,6 @@ public class UsuarioService implements IUsuarioService {
     public ResponseEntity<?> ativaDesativaUsuario(Long id) throws Exception {
 
         Credencial credencial = credencialRepository.findByIdUsuario(id);
-
         if(credencial != null) {
             if(credencial.getIsEnabled()){
                 credencial.setIsEnabled(false);
@@ -183,5 +182,10 @@ public class UsuarioService implements IUsuarioService {
 
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
+    }
+
+    public ResponseEntity<UsuarioLogadoDTO> recuperaUsuarioPorEmail(String email) throws Exception {
+
+        return new ResponseEntity<>(usuarioRepository.buscarUsuarioPorEmail(email), HttpStatus.OK);
     }
 }

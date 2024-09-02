@@ -1,14 +1,12 @@
 package com.pi.mafu_bakery_api.controller;
 
-import com.pi.mafu_bakery_api.dto.AlteracaoDTO;
-import com.pi.mafu_bakery_api.dto.AlteracaoUsuarioDTO;
-import com.pi.mafu_bakery_api.dto.CadastroUsuarioDTO;
-import com.pi.mafu_bakery_api.dto.ListaUsuariosDTO;
+import com.pi.mafu_bakery_api.dto.*;
 import com.pi.mafu_bakery_api.model.Credencial;
 import com.pi.mafu_bakery_api.model.Usuario;
 import com.pi.mafu_bakery_api.service.UsuarioService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -55,4 +53,8 @@ public class UsuarioController {
         return usuarioService.alterarUsuario(email, dto, request);
     }
 
+    @GetMapping("/usuarioLogado")
+    public ResponseEntity<UsuarioLogadoDTO> usuarioLogado(@RequestParam ("email") String email) throws Exception {
+        return usuarioService.recuperaUsuarioPorEmail(email);
+    }
 }
