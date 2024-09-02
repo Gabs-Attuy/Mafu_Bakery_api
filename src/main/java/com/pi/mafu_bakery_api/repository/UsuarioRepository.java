@@ -26,7 +26,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     @Query("SELECT u FROM Usuario u WHERE u.cpf = ?1")
     Usuario buscaPorCPF(String cpf);
 
-    @Query("SELECT new com.pi.mafu_bakery_api.dto.UsuarioLogadoDTO(u.id, u.nome, p.permissao) " +
+    @Query("SELECT new com.pi.mafu_bakery_api.dto.UsuarioLogadoDTO(u.id, u.nome, c.email, p.permissao) " +
             "FROM Usuario u " +
             "JOIN u.credencial c " +
             "JOIN c.permissao p " +
