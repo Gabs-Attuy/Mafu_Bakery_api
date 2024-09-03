@@ -7,6 +7,7 @@ import com.pi.mafu_bakery_api.model.*;
 import com.pi.mafu_bakery_api.repository.*;
 import com.pi.mafu_bakery_api.security.ProvedorTokenJWT;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,6 +36,7 @@ public class UsuarioService implements IUsuarioService {
     @Autowired
     private PermissaoRepository permissaoRepository;
 
+    @Transactional
     public ResponseEntity<Usuario> cadastrarUsuario(CadastroUsuarioDTO dto) throws Exception {
 
         if(checaSeOsParametrosDeEntradaNaoSaoNulos(dto))
@@ -50,16 +52,9 @@ public class UsuarioService implements IUsuarioService {
         credencial.setEmail(dto.getEmail());
         credencial.setSenha(encryptPassword(dto.getSenha()));
 
-//        RoleEnum roleEnum = RoleEnum.valueOf(String.valueOf(dto.getPermissao()));
-//        Permissao permissao = permissaoRepository.findPermissaoByNome(String.valueOf(dto.getPermissao()));
-        Permissao permissao = new Permissao();
         RoleEnum roleEnum = RoleEnum.valueOf(String.valueOf(dto.getPermissao()));
-        permissao.setPermissao(roleEnum);
+        Permissao permissao = permissaoRepository.findPermissaoByNome(String.valueOf(roleEnum));
 
-        if (roleEnum == RoleEnum.ADMINISTRADOR)
-            permissao.setId(1L);
-        else
-            permissao.setId(2L);
         credencial.setPermissao(permissao);
         credencialRepository.save(credencial);
         return new ResponseEntity<>(HttpStatus.CREATED);
