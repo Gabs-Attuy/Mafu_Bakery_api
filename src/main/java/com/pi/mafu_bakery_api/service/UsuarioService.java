@@ -5,7 +5,6 @@ import com.pi.mafu_bakery_api.enums.RoleEnum;
 import com.pi.mafu_bakery_api.interfaces.IUsuarioService;
 import com.pi.mafu_bakery_api.model.*;
 import com.pi.mafu_bakery_api.repository.*;
-import jakarta.transaction.Transactional;
 import com.pi.mafu_bakery_api.security.ProvedorTokenJWT;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +35,6 @@ public class UsuarioService implements IUsuarioService {
     @Autowired
     private PermissaoRepository permissaoRepository;
 
-    @Transactional
     public ResponseEntity<Usuario> cadastrarUsuario(CadastroUsuarioDTO dto) throws Exception {
 
         if(checaSeOsParametrosDeEntradaNaoSaoNulos(dto))
