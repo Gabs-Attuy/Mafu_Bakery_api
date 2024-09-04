@@ -52,11 +52,23 @@ public class UsuarioService implements IUsuarioService {
         credencial.setEmail(dto.getEmail());
         credencial.setSenha(encryptPassword(dto.getSenha()));
 
+        Permissao permissao = new Permissao();
         RoleEnum roleEnum = RoleEnum.valueOf(String.valueOf(dto.getPermissao()));
-        Permissao permissao = permissaoRepository.findPermissaoByNome(String.valueOf(roleEnum));
+        permissao.setPermissao(roleEnum);
 
+        if (roleEnum == RoleEnum.ADMINISTRADOR)
+            permissao.setId(1L);
+        else
+            permissao.setId(2L);
         credencial.setPermissao(permissao);
         credencialRepository.save(credencial);
+
+//        RoleEnum roleEnum = RoleEnum.valueOf(String.valueOf(dto.getPermissao()));
+//        Permissao permissao = permissaoRepository.findPermissaoByNome(String.valueOf(roleEnum));
+//
+//
+//        credencial.setPermissao(permissao);
+//        credencialRepository.save(credencial);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
