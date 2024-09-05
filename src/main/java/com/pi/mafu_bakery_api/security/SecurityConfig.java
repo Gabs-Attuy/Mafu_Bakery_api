@@ -31,7 +31,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/usuario").hasAuthority("ADMINISTRADOR")
                         .requestMatchers(HttpMethod.POST, "/api/cliente").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/api/ativaDesativaUsuario").hasAuthority("ADMINISTRADOR")
-                        .requestMatchers(HttpMethod.PUT, "/api/alterarUsuario").hasAuthority("ADMINISTRADOR")
+                        .requestMatchers(HttpMethod.PATCH, "/api/alterarUsuario").hasAuthority("ADMINISTRADOR")
                         .requestMatchers(HttpMethod.PUT, "/api/alterarSenha").hasAuthority("ADMINISTRADOR")
                         .requestMatchers(HttpMethod.POST, "/api/auth/signin").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/usuarioLogado").permitAll()
@@ -39,6 +39,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/listarPedidos").hasAuthority("ESTOQUISTA")
                         .requestMatchers(HttpMethod.GET, "/api/listarProdutos").hasAnyAuthority("ADMINISTRADOR", "ESTOQUISTA")
                         .requestMatchers(HttpMethod.GET, "/api/usuariosPorPesquisa").hasAuthority("ADMINISTRADOR")
+                        .requestMatchers(HttpMethod.GET, "/api/buscaUsuario").hasAuthority("ADMINISTRADOR")
                         .anyRequest().authenticated())
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .cors(withDefaults()); // Adiciona suporte a CORS

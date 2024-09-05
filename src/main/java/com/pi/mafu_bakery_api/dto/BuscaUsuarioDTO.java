@@ -1,6 +1,7 @@
 package com.pi.mafu_bakery_api.dto;
 
 import com.pi.mafu_bakery_api.enums.RoleEnum;
+import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,10 +12,13 @@ import org.hibernate.validator.constraints.br.CPF;
 @AllArgsConstructor
 @Getter
 @Setter
-public class AlteracaoDTO {
+public class BuscaUsuarioDTO {
+
     private String nome;
     @CPF
     private String cpf;
-    private String senha;
+    @Email
+    private String email;
     private RoleEnum permissao;
+
 }

@@ -20,13 +20,15 @@ public interface IUsuarioService {
 
     ResponseEntity<Credencial> alterarSenha(Long id, AlteracaoUsuarioDTO dto) throws Exception;
 
-    ResponseEntity<Usuario> alterarUsuario(String  email, AlteracaoDTO dto, HttpServletRequest request) throws Exception;
+    ResponseEntity<?> alterarUsuario(String  email, AlteracaoDTO dto, HttpServletRequest request) throws Exception;
 
     ResponseEntity<?> ativaDesativaUsuario(Long id) throws Exception;
 
     ResponseEntity<UsuarioLogadoDTO> recuperaUsuarioPorEmail(String email) throws Exception;
 
     ResponseEntity<List<ListaUsuariosDTO>> recuperaUsuariosPorPesquisa(String nome) throws Exception;
+
+    ResponseEntity<BuscaUsuarioDTO> buscaUsuario(Long id) throws Exception;
 
     ResponseEntity<List<Produto>> listarProdutos() throws Exception;
 

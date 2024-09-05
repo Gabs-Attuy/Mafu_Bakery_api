@@ -42,6 +42,11 @@ public class UsuarioController {
         return usuarioService.listarProdutos();
     }
 
+    @GetMapping("/buscaUsuario")
+    public ResponseEntity<BuscaUsuarioDTO> buscaUsuario(Long id) throws Exception {
+        return usuarioService.buscaUsuario(id);
+    }
+
     @GetMapping("/listarPedidos")
     public ResponseEntity<List<Pedido>> listarPedidos() throws Exception {
         return usuarioService.listarPedidos();
@@ -58,8 +63,8 @@ public class UsuarioController {
         return usuarioService.ativaDesativaUsuario(id);
     }
 
-    @PutMapping("/alterarUsuario")
-    public ResponseEntity<Usuario> alterarUsuario(@RequestParam ("email") String email,
+    @PatchMapping("/alterarUsuario")
+    public ResponseEntity<?> alterarUsuario(@RequestParam ("email") String email,
                                                   @RequestBody AlteracaoDTO dto, HttpServletRequest request) throws Exception{
         return usuarioService.alterarUsuario(email, dto, request);
     }

@@ -53,9 +53,9 @@ public class UsuarioService implements IUsuarioService {
         credencial.setSenha(encryptPassword(dto.getSenha()));
 
         RoleEnum roleEnum = RoleEnum.valueOf(String.valueOf(dto.getPermissao()));
-        Permissao permissao = permissaoRepository.findPermissaoByNome(String.valueOf(roleEnum));
-
+        Permissao permissao = permissaoRepository.findPermissaoByNome(roleEnum);
         credencial.setPermissao(permissao);
+
         credencialRepository.save(credencial);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
@@ -106,6 +106,12 @@ public class UsuarioService implements IUsuarioService {
 
     }
 
+    public ResponseEntity<BuscaUsuarioDTO> buscaUsuario(Long id) throws Exception {
+
+        return new ResponseEntity<>(usuarioRepository.buscarUsuario(id), HttpStatus.OK);
+
+    }
+
     public ResponseEntity<List<Produto>> listarProdutos() throws Exception {
         return null;
     }
@@ -135,7 +141,7 @@ public class UsuarioService implements IUsuarioService {
     }
 
 
-    public ResponseEntity<Usuario> alterarUsuario(String  email, AlteracaoDTO dto, HttpServletRequest request) throws Exception {
+    public ResponseEntity<?> alterarUsuario(String  email, AlteracaoDTO dto, HttpServletRequest request) throws Exception {
 
         String emailAutenticado = provedorTokenJWT.validaToken(provedorTokenJWT.preparaHeaderToken(request));
 
@@ -144,32 +150,27 @@ public class UsuarioService implements IUsuarioService {
         }
 
         Credencial credencial = credencialRepository.findUsuarioByEmail(email);
-        Usuario usuario = usuarioRepository.findById(credencial.getId()).orElseThrow( () -> new Exception("usuario nao encontrado"));
-        Permissao permissao = new Permissao();
-        RoleEnum roleEnum = RoleEnum.valueOf(String.valueOf(dto.getPermissao()));
-
+        Usuario usuario = usuarioRepository.findById(credencial.getUsuario().getId()).orElseThrow( () -> new Exception("usuario nao encontrado"));
 
         if(usuario != null){
-            usuario.setNome(dto.getNome());
+            if(dto.getNome() != null){
+                usuario.setNome(dto.getNome());
+            }
             if(dto.getCpf() != null && !dto.getCpf().equals(usuario.getCpf())){
                 Usuario usuarioExistente = usuarioRepository.buscaPorCPF(dto.getCpf());
                 if(usuarioExistente != null && !usuarioExistente.getId().equals(usuario.getId())){
                     return new ResponseEntity<>(HttpStatus.CONFLICT);
                 }
+                usuario.setCpf(dto.getCpf());
             }
-            usuario.setCpf(dto.getCpf());
 
             if(emailAutenticado.equals(email))
                 return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-            else
-                permissao.setPermissao(roleEnum);
-
-            if (roleEnum == RoleEnum.ADMINISTRADOR)
-                permissao.setId(1L);
-            else
-                permissao.setId(2L);
-
-            credencial.setPermissao(permissao);
+            else {
+                RoleEnum roleEnum = RoleEnum.valueOf(String.valueOf(dto.getPermissao()));
+                Permissao permissao = permissaoRepository.findPermissaoByNome(roleEnum);
+                credencial.setPermissao(permissao);
+            }
 
             usuarioRepository.save(usuario);
             credencialRepository.save(credencial);
