@@ -39,25 +39,30 @@ public class UsuarioService implements IUsuarioService {
     @Transactional
     public ResponseEntity<Usuario> cadastrarUsuario(CadastroUsuarioDTO dto) throws Exception {
 
-        if(checaSeOsParametrosDeEntradaNaoSaoNulos(dto))
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        try{
+            if(checaSeOsParametrosDeEntradaNaoSaoNulos(dto))
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
-        Usuario usuario = new Usuario();
-        usuario.setNome(dto.getNome());
-        usuario.setCpf(dto.getCpf());
-        usuarioRepository.save(usuario);
+            Usuario usuario = new Usuario();
+            usuario.setNome(dto.getNome());
+            usuario.setCpf(dto.getCpf());
+            usuarioRepository.save(usuario);
 
-        Credencial credencial = new Credencial();
-        credencial.setUsuario(usuario);
-        credencial.setEmail(dto.getEmail());
-        credencial.setSenha(encryptPassword(dto.getSenha()));
+            Credencial credencial = new Credencial();
+            credencial.setUsuario(usuario);
+            credencial.setEmail(dto.getEmail());
+            credencial.setSenha(encryptPassword(dto.getSenha()));
 
-        RoleEnum roleEnum = RoleEnum.valueOf(String.valueOf(dto.getPermissao()));
-        Permissao permissao = permissaoRepository.findPermissaoByNome(roleEnum);
-        credencial.setPermissao(permissao);
+            RoleEnum roleEnum = RoleEnum.valueOf(String.valueOf(dto.getPermissao()));
+            Permissao permissao = permissaoRepository.findPermissaoByNome(roleEnum);
+            credencial.setPermissao(permissao);
+            credencialRepository.save(credencial);
 
-        credencialRepository.save(credencial);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+            return new ResponseEntity<>(HttpStatus.CREATED);
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private boolean checaSeOsParametrosDeEntradaNaoSaoNulos(CadastroUsuarioDTO dto) {
