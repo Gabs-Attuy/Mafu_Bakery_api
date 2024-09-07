@@ -1,5 +1,6 @@
 package com.pi.mafu_bakery_api.repository;
 
+import com.pi.mafu_bakery_api.dto.BuscaUsuarioDTO;
 import com.pi.mafu_bakery_api.dto.ListaUsuariosDTO;
 import com.pi.mafu_bakery_api.dto.UsuarioLogadoDTO;
 import com.pi.mafu_bakery_api.model.Usuario;
@@ -22,6 +23,13 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
             "JOIN c.permissao p " +
             "WHERE LOWER(u.nome) LIKE LOWER(CONCAT('%', :nome, '%'))")
     List<ListaUsuariosDTO> listarUsuariosPorNome(@Param("nome") String nome);
+
+    @Query("SELECT new com.pi.mafu_bakery_api.dto.BuscaUsuarioDTO(u.nome, u.cpf, c.email, p.permissao) " +
+            "FROM Usuario u " +
+            "JOIN u.credencial c " +
+            "JOIN c.permissao p " +
+            "WHERE u.id = ?1")
+    BuscaUsuarioDTO buscarUsuario(Long id);
 
     @Query("SELECT u FROM Usuario u WHERE u.cpf = ?1")
     Usuario buscaPorCPF(String cpf);
