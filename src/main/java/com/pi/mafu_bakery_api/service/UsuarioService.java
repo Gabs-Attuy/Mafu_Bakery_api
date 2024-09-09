@@ -125,34 +125,7 @@ public class UsuarioService implements IUsuarioService {
         return null;
     }
 
-    public ResponseEntity<Credencial> alterarSenha(Long id, AlteracaoUsuarioDTO dto) throws Exception {
-
-        Credencial credencial = credencialRepository.findByIdUsuario(id);
-
-        if(credencial != null) {
-            if(dto.getSenha() != null && dto.getConfirmaSenha() != null) {
-                if (new BCryptPasswordEncoder().matches(dto.getSenha(), credencial.getSenha())){
-                    return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-                }
-                if (dto.getSenha().equals(dto.getConfirmaSenha())) {
-                    credencial.setSenha(encryptPassword(dto.getSenha()));
-                    credencialRepository.save(credencial);
-                    return new ResponseEntity<>(credencial, HttpStatus.OK);
-                }
-            }
-        }
-
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
-
-
-    public ResponseEntity<?> alterarUsuario(String  email, AlteracaoDTO dto, HttpServletRequest request) throws Exception {
-
-        String emailAutenticado = provedorTokenJWT.validaToken(provedorTokenJWT.preparaHeaderToken(request));
-
-        if (emailAutenticado == null || emailAutenticado.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
+    public ResponseEntity<?> alterarUsuario(String  email, AlteracaoDTO dto) throws Exception {
 
         Credencial credencial = credencialRepository.findUsuarioByEmail(email);
         Usuario usuario = usuarioRepository.findById(credencial.getUsuario().getId()).orElseThrow( () -> new Exception("usuario nao encontrado"));
@@ -168,10 +141,13 @@ public class UsuarioService implements IUsuarioService {
                 }
                 usuario.setCpf(dto.getCpf());
             }
-
-            if(emailAutenticado.equals(email))
-                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-            else {
+            if(dto.getSenha() != null) {
+                if (new BCryptPasswordEncoder().matches(dto.getSenha(), credencial.getSenha())){
+                    return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+                }
+                credencial.setSenha(encryptPassword(dto.getSenha()));
+            }
+            if(dto.getPermissao() != null) {
                 RoleEnum roleEnum = RoleEnum.valueOf(String.valueOf(dto.getPermissao()));
                 Permissao permissao = permissaoRepository.findPermissaoByNome(roleEnum);
                 credencial.setPermissao(permissao);
