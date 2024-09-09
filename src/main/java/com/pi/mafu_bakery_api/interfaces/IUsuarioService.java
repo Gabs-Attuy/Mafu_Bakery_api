@@ -18,9 +18,7 @@ public interface IUsuarioService {
 
     ResponseEntity<List<ListaUsuariosDTO>> recuperaTodosUsuarios();
 
-    ResponseEntity<Credencial> alterarSenha(Long id, AlteracaoUsuarioDTO dto) throws Exception;
-
-    ResponseEntity<?> alterarUsuario(String  email, AlteracaoDTO dto, HttpServletRequest request) throws Exception;
+    ResponseEntity<?> alterarUsuario(String  email, AlteracaoDTO dto) throws Exception;
 
     ResponseEntity<?> ativaDesativaUsuario(Long id) throws Exception;
 
