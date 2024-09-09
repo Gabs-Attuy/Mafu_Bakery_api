@@ -52,12 +52,6 @@ public class UsuarioController {
         return usuarioService.listarPedidos();
     }
 
-    @PutMapping("/alterarSenha")
-    public ResponseEntity<Credencial> alterarSenhaUsuario(@RequestParam ("id") Long id,
-                                                          @RequestBody AlteracaoUsuarioDTO dto) throws Exception {
-        return usuarioService.alterarSenha(id, dto);
-    }
-
     @PutMapping("/ativaDesativaUsuario")
     public ResponseEntity<?> ativaDesativaUsuario(@RequestParam ("id") Long id) throws Exception {
         return usuarioService.ativaDesativaUsuario(id);
@@ -65,8 +59,8 @@ public class UsuarioController {
 
     @PatchMapping("/alterarUsuario")
     public ResponseEntity<?> alterarUsuario(@RequestParam ("email") String email,
-                                                  @RequestBody AlteracaoDTO dto, HttpServletRequest request) throws Exception{
-        return usuarioService.alterarUsuario(email, dto, request);
+                                                  @RequestBody AlteracaoDTO dto) throws Exception{
+        return usuarioService.alterarUsuario(email, dto);
     }
 
     @GetMapping("/usuarioLogado")
