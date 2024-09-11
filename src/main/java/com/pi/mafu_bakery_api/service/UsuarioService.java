@@ -6,7 +6,6 @@ import com.pi.mafu_bakery_api.interfaces.IUsuarioService;
 import com.pi.mafu_bakery_api.model.*;
 import com.pi.mafu_bakery_api.repository.*;
 import com.pi.mafu_bakery_api.security.ProvedorTokenJWT;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -167,11 +166,7 @@ public class UsuarioService implements IUsuarioService {
 
         Credencial credencial = credencialRepository.findByIdUsuario(id);
         if(credencial != null) {
-            if(credencial.getIsEnabled()){
-                credencial.setIsEnabled(false);
-            } else {
-                credencial.setIsEnabled(true);
-            }
+            credencial.setIsEnabled(!credencial.getIsEnabled());
             credencialRepository.save(credencial);
             return new ResponseEntity<>(HttpStatus.OK);
         }
