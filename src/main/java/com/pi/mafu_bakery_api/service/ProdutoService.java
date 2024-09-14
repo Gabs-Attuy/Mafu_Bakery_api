@@ -7,12 +7,25 @@ import com.pi.mafu_bakery_api.repository.ProdutoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import com.pi.mafu_bakery_api.BlobsAzure.BlobStorageService;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class ProdutoService implements IProdutoService {
 
     @Autowired
     private ProdutoRepository produtoRepository;
+  
+    private final BlobStorageService blobStorageService;
+
+    public ProdutoService(BlobStorageService blobStorageService) {
+        this.blobStorageService = blobStorageService;
+    }
+  
+    public String uploadImage(MultipartFile image) throws Exception {
+        // Upload da imagem para o Azure Blob Storage
+        return blobStorageService.uploadImage(image);
+    }
 
     public ResponseEntity<Produto> cadastraProduto(CadastroProdutoDTO dto) throws Exception {
 
