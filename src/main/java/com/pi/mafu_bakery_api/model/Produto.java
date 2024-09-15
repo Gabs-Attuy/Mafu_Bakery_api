@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -30,6 +31,10 @@ public class Produto {
     private Boolean status = true;
     @Column(nullable = false)
     private String categoria;
+    @OneToMany(mappedBy = "produtoId", cascade = CascadeType.ALL)
+    private List<URLImagem> urlImagemList;
+    @Column(nullable = false)
+    private Double avaliacao;
 
     //TODO: Avaliação do produto no cadastro de 0,5 em 0,5;
 }
