@@ -18,5 +18,6 @@ public class URLImagem {
     private String url;
     @ManyToOne
     @JoinColumn(name = "fk_produto_id")
-    private Produto produto_id;
+    private Produto produtoId;
+    private Boolean principal;
 }
