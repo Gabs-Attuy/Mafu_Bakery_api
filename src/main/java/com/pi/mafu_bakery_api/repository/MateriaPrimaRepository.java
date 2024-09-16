@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public interface MateriaPrimaRepository extends JpaRepository<MateriaPrima, Long> {
-    @Query("SELECT new com.pi.mafu_bakery_api.dto.ListaMateriaPrimaDTO(mp.id, mp.nome, mp.quantidadeEstoque, mp.preco, mp.status) " +
+    @Query("SELECT new com.pi.mafu_bakery_api.dto.ListaMateriaPrimaDTO(mp.id, mp.nome, mp.quantidadeEstoque, mp.preco, mp.status, mp.unidadeMedida) " +
             "FROM MateriaPrima mp " +
             "ORDER BY mp.id DESC")
     List<ListaMateriaPrimaDTO> listarMateriaPrima();

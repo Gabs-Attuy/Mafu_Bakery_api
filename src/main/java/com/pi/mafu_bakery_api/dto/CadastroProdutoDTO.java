@@ -27,8 +27,7 @@ public class CadastroProdutoDTO {
     @Column(nullable = false)
     private String tamanho;
     @Column(nullable = false)
-    List<MateriaPrima> ingredientes;
-    private Double qtdIngredientes;
+    List<IngredienteDTO> ingredientes;
     private String categoria;
     @JsonIgnore
     private List<MultipartFile> imagens;

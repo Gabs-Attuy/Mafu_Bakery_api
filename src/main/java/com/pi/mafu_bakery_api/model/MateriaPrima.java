@@ -29,4 +29,6 @@ public class MateriaPrima {
     @Digits(integer = 5, fraction = 3)
     private BigDecimal quantidadeEstoque;
     private Boolean status;
+    @Column(nullable = false)
+    private String unidadeMedida;
 }

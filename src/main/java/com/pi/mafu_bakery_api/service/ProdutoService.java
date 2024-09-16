@@ -1,7 +1,9 @@
 package com.pi.mafu_bakery_api.service;
 
 import com.pi.mafu_bakery_api.dto.CadastroProdutoDTO;
+import com.pi.mafu_bakery_api.dto.IngredienteDTO;
 import com.pi.mafu_bakery_api.dto.ListaMateriaPrimaDTO;
+import com.pi.mafu_bakery_api.dto.ProdutoResumoDTO;
 import com.pi.mafu_bakery_api.interfaces.IProdutoService;
 import com.pi.mafu_bakery_api.key.ReceitaKey;
 import com.pi.mafu_bakery_api.model.MateriaPrima;
@@ -70,8 +72,6 @@ public class ProdutoService implements IProdutoService {
         *   adicionar unidade de medida na materia prima
         * */
 
-
-
         try {
             if (!checaSeOsParametrosDeEntradaNaoSaoNulos(dto)) {
                 Produto produto = new Produto();
@@ -97,41 +97,41 @@ public class ProdutoService implements IProdutoService {
 //                    urlRepository.save(imagem);
 //                }
 
-
                 for(MultipartFile imagem : dto.getImagens()){
                     uploadImage(imagem, produto);
                 }
 
-
                 List<Receita> receitas = new ArrayList<>();
-                for (MateriaPrima listaMateriaPrima : dto.getIngredientes()) {
+                for (IngredienteDTO ingredienteDTO : dto.getIngredientes()) {
                     // Busca a Matéria-Prima pelo ID no banco de dados
-                    MateriaPrima materiaPrima = materiaPrimaRepository.findById(listaMateriaPrima.getId())
-                            .orElseThrow(() -> new Exception("Matéria-Prima não encontrada com o ID: " + listaMateriaPrima.getId()));
+                    MateriaPrima materiaPrima = materiaPrimaRepository.findById(ingredienteDTO.getId())
+                            .orElseThrow(() -> new Exception("Matéria-Prima não encontrada com o ID: " + ingredienteDTO.getId()));
 
                     // Cria uma nova instância de Receita, que relaciona a Matéria-Prima com o Produto
                     Receita receita = new Receita();
                     ReceitaKey receitaKey = new ReceitaKey();
                     receitaKey.setProduto_id(produto);
-                    receitaKey.setMateriaPrima_id(listaMateriaPrima);
+                    receitaKey.setMateriaPrima_id(materiaPrima);
                     receita.setId(receitaKey);
-                    receita.setQuantidadeNecessaria(dto.getQtdIngredientes()); // Quantidade usada para o produto
+                    receita.setQuantidadeNecessaria(ingredienteDTO.getQuantidade()); // Quantidade usada para o produto
                     receitas.add(receita);
                     receitaRepository.save(receita);
                 }
-
             }
         } catch (Exception e) {
                 throw new Exception(e);
         }
-
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     private boolean checaSeOsParametrosDeEntradaNaoSaoNulos(CadastroProdutoDTO dto) {
         return dto == null || dto.getNome() == null || dto.getDescricao() == null ||
                 dto.getTamanho() == null || dto.getPreco() == null || dto.getImagens() == null
-                || dto.getIngredientes() == null || dto.getQtdIngredientes() == null || dto.getCategoria() == null
+                || dto.getIngredientes() == null || dto.getCategoria() == null
                 || dto.getAvaliacao() == null;
+    }
+
+    public ResponseEntity<List<ProdutoResumoDTO>> listarProdutos() {
+        return new ResponseEntity<>(produtoRepository.listarProdutosDesc(), HttpStatus.OK);
     }
 }

@@ -33,6 +33,7 @@ public class MateriaPrimaService implements IMateriaPrimaService {
             materiaPrima.setDescricao(dto.getDescricao());
             materiaPrima.setPreco(dto.getPreco());
             materiaPrima.setQuantidadeEstoque(dto.getQuantidadeEstoque());
+            materiaPrima.setUnidadeMedida(dto.getUnidadeMedida());
             materiaPrima.setStatus(true);
             materiaPrimaRepository.save(materiaPrima);
 
