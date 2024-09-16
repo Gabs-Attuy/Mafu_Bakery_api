@@ -1,6 +1,7 @@
 package com.pi.mafu_bakery_api.controller;
 
 import com.pi.mafu_bakery_api.dto.CadastroProdutoDTO;
+import com.pi.mafu_bakery_api.dto.ProdutoResumoDTO;
 import com.pi.mafu_bakery_api.model.Produto;
 import com.pi.mafu_bakery_api.service.ProdutoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,5 +40,10 @@ public class ProdutoController {
 
         produtoDTO.setImagens(imagens);
         return produtoService.cadastraProduto(produtoDTO);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<ProdutoResumoDTO>> listarProdutos() {
+        return produtoService.listarProdutos();
     }
 }

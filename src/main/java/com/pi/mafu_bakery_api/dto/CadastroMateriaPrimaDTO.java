@@ -24,5 +24,7 @@ public class CadastroMateriaPrimaDTO {
     @Column(nullable = false)
     @Digits(integer = 10, fraction = 3)
     private BigDecimal quantidadeEstoque;
+    @Column(nullable = false)
+    private String unidadeMedida;
 
 }
