@@ -2,7 +2,6 @@ package com.pi.mafu_bakery_api.service;
 
 import com.pi.mafu_bakery_api.dto.CadastroProdutoDTO;
 import com.pi.mafu_bakery_api.dto.IngredienteDTO;
-import com.pi.mafu_bakery_api.dto.ListaMateriaPrimaDTO;
 import com.pi.mafu_bakery_api.dto.ProdutoResumoDTO;
 import com.pi.mafu_bakery_api.interfaces.IProdutoService;
 import com.pi.mafu_bakery_api.key.ReceitaKey;
@@ -15,6 +14,10 @@ import com.pi.mafu_bakery_api.repository.ProdutoRepository;
 import com.pi.mafu_bakery_api.repository.ReceitaRepository;
 import com.pi.mafu_bakery_api.repository.URLRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -22,7 +25,10 @@ import com.pi.mafu_bakery_api.BlobsAzure.BlobStorageService;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class ProdutoService implements IProdutoService {
@@ -65,13 +71,6 @@ public class ProdutoService implements IProdutoService {
 
     public ResponseEntity<Produto> cadastraProduto(CadastroProdutoDTO dto) throws Exception {
 
-        /*TODO: Solicitar como entrada uma lista de ingredientes(Matéria-Prima) e a quantidade de cada uma para
-        *  para fazer a validação de quantidade inserida no estoque inicial VS quantidade de cada ingrediente no estoque
-        *  EX: Inseri 10 coxinhas e seus ingredientes. Preciso verificar se os ingredientes selecionados sao o suficiente para
-        *  produzir 10 coxinhas.//
-        *   adicionar unidade de medida na materia prima
-        * */
-
         try {
             if (!checaSeOsParametrosDeEntradaNaoSaoNulos(dto)) {
                 Produto produto = new Produto();
@@ -84,36 +83,21 @@ public class ProdutoService implements IProdutoService {
 
                 produtoRepository.save(produto);
 
-//                if (dto.getImagens() != null && !dto.getImagens().isEmpty()) {
-//                    List<String> imagemUrls = uploadImage(dto.getImagens());
-//                    List<URLImagem> imagens = new ArrayList<>();
-//                    URLImagem imagem = new URLImagem();;
-//                    for (String imageUrl : imagemUrls) {
-//                        imagem.setUrl(imageUrl);
-//                        imagem.setProdutoId(produto); // Associa a imagem ao produto
-//                        imagens.add(imagem);
-//                    }
-//                    produto.setUrlImagemList(imagens); // Adiciona as imagens ao produto
-//                    urlRepository.save(imagem);
-//                }
-
                 for(MultipartFile imagem : dto.getImagens()){
                     uploadImage(imagem, produto);
                 }
 
                 List<Receita> receitas = new ArrayList<>();
                 for (IngredienteDTO ingredienteDTO : dto.getIngredientes()) {
-                    // Busca a Matéria-Prima pelo ID no banco de dados
                     MateriaPrima materiaPrima = materiaPrimaRepository.findById(ingredienteDTO.getId())
                             .orElseThrow(() -> new Exception("Matéria-Prima não encontrada com o ID: " + ingredienteDTO.getId()));
 
-                    // Cria uma nova instância de Receita, que relaciona a Matéria-Prima com o Produto
                     Receita receita = new Receita();
                     ReceitaKey receitaKey = new ReceitaKey();
                     receitaKey.setProduto_id(produto);
                     receitaKey.setMateriaPrima_id(materiaPrima);
                     receita.setId(receitaKey);
-                    receita.setQuantidadeNecessaria(ingredienteDTO.getQuantidade()); // Quantidade usada para o produto
+                    receita.setQuantidadeNecessaria(ingredienteDTO.getQuantidade());
                     receitas.add(receita);
                     receitaRepository.save(receita);
                 }
@@ -131,7 +115,41 @@ public class ProdutoService implements IProdutoService {
                 || dto.getAvaliacao() == null;
     }
 
-    public ResponseEntity<List<ProdutoResumoDTO>> listarProdutos() {
-        return new ResponseEntity<>(produtoRepository.listarProdutosDesc(), HttpStatus.OK);
+    public ResponseEntity<Map<String, Object>> listarProdutos(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"));
+        Page<Produto> produtoPage = produtoRepository.findAll(pageable);
+        List<ProdutoResumoDTO> produtos = produtoPage.stream()
+                .map(produto -> new ProdutoResumoDTO(
+                        produto.getId(),
+                        produto.getNome(),
+                        produto.getQuantidadeEstoque(),
+                        produto.getPreco(),
+                        produto.getStatus()
+                ))
+                .collect(Collectors.toList());
+        Map<String, Object> response = new HashMap<>();
+        response.put("produtos", produtos);
+        response.put("totalPages", produtoPage.getTotalPages());
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+//    public ResponseEntity<Map<String, Object>> listarProdutos(int page, int size) {
+//        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"));
+//        Page<Produto> produtoPage = produtoRepository.findAll(pageable);
+//        List<ProdutoResumoDTO> produtos = produtoPage.stream()
+//                .map(produto -> new ProdutoResumoDTO(
+//                                        produto.getId(),
+//                                        produto.getNome(),
+//                        produto.getQuantidadeEstoque(),
+//                        produto.getPreco(),
+//                                        produto.getStatus()
+//                                ))
+//                .collect(Collectors.toList());
+//        Map<String, Object> response = new HashMap<>();
+//        response.put("produtos", produtos);
+//        response.put("totalPages", produtoPage.getTotalPages());
+//
+//        return new ResponseEntity<>(response, HttpStatus.OK);
+//    }
 }

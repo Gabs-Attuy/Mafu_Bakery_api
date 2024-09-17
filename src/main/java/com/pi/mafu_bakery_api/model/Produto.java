@@ -35,6 +35,4 @@ public class Produto {
     private List<URLImagem> urlImagemList;
     @Column(nullable = false)
     private Double avaliacao;
-
-    //TODO: Avaliação do produto no cadastro de 0,5 em 0,5;
 }
