@@ -11,27 +11,19 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 @CrossOrigin("*")
 @RestController
 @RequestMapping("/api/produtos")
 public class ProdutoController {
+
     @Autowired
     private ProdutoService produtoService;
 
     public ProdutoController(ProdutoService produtoService) {
         this.produtoService = produtoService;
     }
-
-//    @PostMapping("/upload")
-//    public ResponseEntity<String> uploadImage(@RequestParam("file") MultipartFile file) {
-//        try {
-//            String imageUrl = produtoService.uploadImage(file);
-//            return ResponseEntity.ok(imageUrl);
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao fazer upload da imagem: " + e.getMessage());
-//        }
-//    }
 
     @PostMapping("/cadastrar")
     public ResponseEntity<Produto> cadastraProduto(
@@ -42,8 +34,10 @@ public class ProdutoController {
         return produtoService.cadastraProduto(produtoDTO);
     }
 
-    @GetMapping
-    public ResponseEntity<List<ProdutoResumoDTO>> listarProdutos() {
-        return produtoService.listarProdutos();
+    @GetMapping("/listagem")
+    public ResponseEntity<Map<String, Object>> listarProdutos(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return produtoService.listarProdutos(page, size);
     }
 }
