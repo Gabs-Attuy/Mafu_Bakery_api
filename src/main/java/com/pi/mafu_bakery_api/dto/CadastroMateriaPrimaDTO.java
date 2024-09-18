@@ -19,7 +19,7 @@ public class CadastroMateriaPrimaDTO {
     @Column(nullable = false, length = 2000)
     private String descricao;
     @Column(nullable = false)
-    @Digits(integer = 10, fraction = 2)
+    @Digits(integer = 3, fraction = 2)
     private BigDecimal preco;
     @Column(nullable = false)
     @Digits(integer = 10, fraction = 3)

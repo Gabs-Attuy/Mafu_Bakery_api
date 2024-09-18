@@ -1,7 +1,7 @@
 package com.pi.mafu_bakery_api.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.pi.mafu_bakery_api.model.MateriaPrima;
+import com.pi.mafu_bakery_api.model.URLImagem;
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.Digits;
 import lombok.AllArgsConstructor;
@@ -16,7 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter @Setter
-public class CadastroProdutoDTO {
+public class BuscaProdutoEReceitaDTO {
 
     @Column(nullable = false, length = 200)
     private String nome;
@@ -29,7 +29,7 @@ public class CadastroProdutoDTO {
     @Column(nullable = false)
     List<IngredienteDTO> ingredientes;
     private String categoria;
-    @JsonIgnore
-    private List<MultipartFile> imagens;
+    private List<URLImagem> imagens;
     private Double avaliacao;
+
 }

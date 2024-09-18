@@ -4,11 +4,14 @@ import com.pi.mafu_bakery_api.key.ReceitaKey;
 import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
+import jakarta.validation.constraints.Digits;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
+
+import java.math.BigDecimal;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,5 +23,6 @@ public class Receita {
     @EmbeddedId
     private ReceitaKey id;
     @Column(nullable = false)
-    private Double quantidadeNecessaria;
+    @Digits(integer = 2, fraction = 3)
+    private BigDecimal quantidadeNecessaria;
 }
