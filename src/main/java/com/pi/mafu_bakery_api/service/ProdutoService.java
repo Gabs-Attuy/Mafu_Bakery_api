@@ -1,5 +1,6 @@
 package com.pi.mafu_bakery_api.service;
 
+import com.pi.mafu_bakery_api.dto.BuscaProdutoEReceitaDTO;
 import com.pi.mafu_bakery_api.dto.CadastroProdutoDTO;
 import com.pi.mafu_bakery_api.dto.IngredienteDTO;
 import com.pi.mafu_bakery_api.dto.ProdutoResumoDTO;
@@ -24,10 +25,7 @@ import org.springframework.stereotype.Service;
 import com.pi.mafu_bakery_api.BlobsAzure.BlobStorageService;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -52,13 +50,6 @@ public class ProdutoService implements IProdutoService {
     }
   
     public void uploadImage(MultipartFile imagens, Produto produtoModel) throws Exception {
-//        // Upload da imagem para o Azure Blob Storage
-//        List<String> imagemUrls = new ArrayList<>();
-//        for(MultipartFile imagem : imagens){
-//            String imagemUrl = blobStorageService.uploadImage(imagem);
-//            imagemUrls.add(imagemUrl);
-//        }
-//        return imagemUrls;
 
         if (imagens != null && !imagens.isEmpty()) {
             String imageUrl = blobStorageService.uploadImage(imagens);
@@ -67,6 +58,7 @@ public class ProdutoService implements IProdutoService {
             urlImagensModel.setProdutoId(produtoModel);
             urlRepository.save(urlImagensModel);
         }
+
     }
 
     public ResponseEntity<Produto> cadastraProduto(CadastroProdutoDTO dto) throws Exception {
@@ -87,7 +79,7 @@ public class ProdutoService implements IProdutoService {
                     uploadImage(imagem, produto);
                 }
 
-                List<Receita> receitas = new ArrayList<>();
+//                List<Receita> receitas = new ArrayList<>();
                 for (IngredienteDTO ingredienteDTO : dto.getIngredientes()) {
                     MateriaPrima materiaPrima = materiaPrimaRepository.findById(ingredienteDTO.getId())
                             .orElseThrow(() -> new Exception("Matéria-Prima não encontrada com o ID: " + ingredienteDTO.getId()));
@@ -98,7 +90,7 @@ public class ProdutoService implements IProdutoService {
                     receitaKey.setMateriaPrima_id(materiaPrima);
                     receita.setId(receitaKey);
                     receita.setQuantidadeNecessaria(ingredienteDTO.getQuantidade());
-                    receitas.add(receita);
+//                    receitas.add(receita);
                     receitaRepository.save(receita);
                 }
             }
@@ -134,22 +126,22 @@ public class ProdutoService implements IProdutoService {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-//    public ResponseEntity<Map<String, Object>> listarProdutos(int page, int size) {
-//        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"));
-//        Page<Produto> produtoPage = produtoRepository.findAll(pageable);
-//        List<ProdutoResumoDTO> produtos = produtoPage.stream()
-//                .map(produto -> new ProdutoResumoDTO(
-//                                        produto.getId(),
-//                                        produto.getNome(),
-//                        produto.getQuantidadeEstoque(),
-//                        produto.getPreco(),
-//                                        produto.getStatus()
-//                                ))
-//                .collect(Collectors.toList());
-//        Map<String, Object> response = new HashMap<>();
-//        response.put("produtos", produtos);
-//        response.put("totalPages", produtoPage.getTotalPages());
-//
-//        return new ResponseEntity<>(response, HttpStatus.OK);
-//    }
+    public ResponseEntity<BuscaProdutoEReceitaDTO> buscarProdutoeReceita(Long id) throws NoSuchElementException {
+
+        Produto produto = produtoRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Produto não encontrado!"));
+        List<IngredienteDTO> ingredientes = receitaRepository.findIngredientesByProdutoId(id);
+
+        BuscaProdutoEReceitaDTO dto = new BuscaProdutoEReceitaDTO();
+        dto.setNome(produto.getNome());
+        dto.setAvaliacao(produto.getAvaliacao());
+        dto.setCategoria(produto.getCategoria());
+        dto.setDescricao(produto.getDescricao());
+        dto.setPreco(produto.getPreco());
+        dto.setTamanho(produto.getTamanho());
+        dto.setIngredientes(ingredientes);
+        dto.setImagens(produto.getUrlImagemList());
+
+        return new ResponseEntity<>(dto, HttpStatus.OK);
+    }
 }
