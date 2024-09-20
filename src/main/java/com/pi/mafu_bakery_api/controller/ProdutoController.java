@@ -48,6 +48,10 @@ public class ProdutoController {
         return produtoService.buscarProdutoeReceita(id);
     }
 
+    @PatchMapping("/statusProduto")
+    public ResponseEntity<?> ativaDesativaProduto(@RequestParam ("id") Long id) throws NoSuchElementException {
+        return produtoService.ativaDesativaProduto(id);
+
     @GetMapping("/buscarNome")
     public ResponseEntity<Map<String, Object>> buscarProdutoPorNome(
             @RequestParam("nome") String nome,

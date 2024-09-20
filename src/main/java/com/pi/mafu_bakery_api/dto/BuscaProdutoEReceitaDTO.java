@@ -29,7 +29,7 @@ public class BuscaProdutoEReceitaDTO {
     @Column(nullable = false)
     List<IngredienteDTO> ingredientes;
     private String categoria;
-    private List<URLImagem> imagens;
+    private List<String> imagens;
     private Double avaliacao;
 
 }

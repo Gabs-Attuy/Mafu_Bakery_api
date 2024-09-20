@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import com.pi.mafu_bakery_api.BlobsAzure.BlobStorageService;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -140,9 +141,25 @@ public class ProdutoService implements IProdutoService {
         dto.setPreco(produto.getPreco());
         dto.setTamanho(produto.getTamanho());
         dto.setIngredientes(ingredientes);
-        dto.setImagens(produto.getUrlImagemList());
+        dto.setImagens(produto.getUrlImagemList()
+                .stream().map(URLImagem::getUrl)
+                .collect(Collectors.toList()));
 
         return new ResponseEntity<>(dto, HttpStatus.OK);
+    }
+
+    public ResponseEntity<?> ativaDesativaProduto(Long id) throws NoSuchElementException {
+
+        Produto produto = produtoRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Produto não encontrado!"));
+
+        if (produto != null) {
+            produto.setStatus(!produto.getStatus());
+            produtoRepository.save(produto);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     public ResponseEntity<Map<String, Object>> buscarProdutoPorNome(String nome, int page, int size) {
@@ -166,4 +183,5 @@ public class ProdutoService implements IProdutoService {
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
 }

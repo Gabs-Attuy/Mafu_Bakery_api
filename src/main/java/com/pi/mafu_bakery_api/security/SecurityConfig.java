@@ -36,6 +36,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PATCH, "/api/alterarUsuario").hasAuthority("ADMINISTRADOR")
                         .requestMatchers(HttpMethod.PATCH, "/api/mp").hasAuthority("ADMINISTRADOR")
                         .requestMatchers(HttpMethod.PATCH, "/api/mp/statusMp").hasAuthority("ADMINISTRADOR")
+                        .requestMatchers(HttpMethod.PATCH, "/api/mp/statusProduto").hasAuthority("ADMINISTRADOR")
                         .requestMatchers(HttpMethod.PATCH, "/api/mp/aumentarMp").hasAuthority("ESTOQUISTA")
                         .requestMatchers(HttpMethod.PATCH, "/api/mp/consumirMp").hasAuthority("ESTOQUISTA")
                         .requestMatchers(HttpMethod.GET, "/api/usuarioLogado").permitAll()
