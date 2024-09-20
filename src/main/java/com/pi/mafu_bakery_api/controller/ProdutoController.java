@@ -47,4 +47,9 @@ public class ProdutoController {
     public ResponseEntity<BuscaProdutoEReceitaDTO> buscaProduto (@RequestParam ("id") Long id) throws NoSuchElementException {
         return produtoService.buscarProdutoeReceita(id);
     }
+
+    @PatchMapping("/statusProduto")
+    public ResponseEntity<?> ativaDesativaProduto(@RequestParam ("id") Long id) throws NoSuchElementException {
+        return produtoService.ativaDesativaProduto(id);
+    }
 }

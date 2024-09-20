@@ -31,7 +31,7 @@ public class Produto {
     private Boolean status = true;
     @Column(nullable = false)
     private String categoria;
-    @OneToMany(mappedBy = "produtoId", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "produtoId", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<URLImagem> urlImagemList;
     @Column(nullable = false)
     private Double avaliacao;
