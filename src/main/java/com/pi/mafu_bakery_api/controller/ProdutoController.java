@@ -47,4 +47,12 @@ public class ProdutoController {
     public ResponseEntity<BuscaProdutoEReceitaDTO> buscaProduto (@RequestParam ("id") Long id) throws NoSuchElementException {
         return produtoService.buscarProdutoeReceita(id);
     }
+
+    @GetMapping("/buscarNome")
+    public ResponseEntity<Map<String, Object>> buscarProdutoPorNome(
+            @RequestParam("nome") String nome,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return produtoService.buscarProdutoPorNome(nome, page, size);
+    }
 }

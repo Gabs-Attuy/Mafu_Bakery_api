@@ -144,4 +144,26 @@ public class ProdutoService implements IProdutoService {
 
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
+
+    public ResponseEntity<Map<String, Object>> buscarProdutoPorNome(String nome, int page, int size) {
+        Pageable paginacao = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"));
+        Page<Produto> produtoPagina = produtoRepository.buscaPorNome(nome, paginacao);
+        if (produtoPagina.getContent().isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        List<ProdutoResumoDTO> produtos = produtoPagina.stream()
+                .map(produto -> new ProdutoResumoDTO(
+                        produto.getId(),
+                        produto.getNome(),
+                        produto.getQuantidadeEstoque(),
+                        produto.getPreco(),
+                        produto.getStatus()
+                ))
+                .collect(Collectors.toList());
+        Map<String, Object> response = new HashMap<>();
+        response.put("produtos", produtos);
+        response.put("totalPages", produtoPagina.getTotalPages());
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }
