@@ -1,9 +1,6 @@
 package com.pi.mafu_bakery_api.service;
 
-import com.pi.mafu_bakery_api.dto.BuscaProdutoEReceitaDTO;
-import com.pi.mafu_bakery_api.dto.CadastroProdutoDTO;
-import com.pi.mafu_bakery_api.dto.IngredienteDTO;
-import com.pi.mafu_bakery_api.dto.ProdutoResumoDTO;
+import com.pi.mafu_bakery_api.dto.*;
 import com.pi.mafu_bakery_api.interfaces.IProdutoService;
 import com.pi.mafu_bakery_api.key.ReceitaKey;
 import com.pi.mafu_bakery_api.model.MateriaPrima;
@@ -14,6 +11,7 @@ import com.pi.mafu_bakery_api.repository.MateriaPrimaRepository;
 import com.pi.mafu_bakery_api.repository.ProdutoRepository;
 import com.pi.mafu_bakery_api.repository.ReceitaRepository;
 import com.pi.mafu_bakery_api.repository.URLRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -26,6 +24,7 @@ import com.pi.mafu_bakery_api.BlobsAzure.BlobStorageService;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.lang.reflect.Array;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -43,7 +42,10 @@ public class ProdutoService implements IProdutoService {
 
     @Autowired
     private ReceitaRepository receitaRepository;
-  
+
+    @Autowired
+    private MateriaPrimaService materiaPrimaService;
+
     private final BlobStorageService blobStorageService;
 
     public ProdutoService(BlobStorageService blobStorageService) {
@@ -73,14 +75,12 @@ public class ProdutoService implements IProdutoService {
                 produto.setPreco(dto.getPreco());
                 produto.setCategoria(dto.getCategoria());
                 produto.setAvaliacao(dto.getAvaliacao());
-
                 produtoRepository.save(produto);
 
                 for(MultipartFile imagem : dto.getImagens()){
                     uploadImage(imagem, produto);
                 }
 
-//                List<Receita> receitas = new ArrayList<>();
                 for (IngredienteDTO ingredienteDTO : dto.getIngredientes()) {
                     MateriaPrima materiaPrima = materiaPrimaRepository.findById(ingredienteDTO.getId())
                             .orElseThrow(() -> new Exception("Matéria-Prima não encontrada com o ID: " + ingredienteDTO.getId()));
@@ -91,7 +91,6 @@ public class ProdutoService implements IProdutoService {
                     receitaKey.setMateriaPrima_id(materiaPrima);
                     receita.setId(receitaKey);
                     receita.setQuantidadeNecessaria(ingredienteDTO.getQuantidade());
-//                    receitas.add(receita);
                     receitaRepository.save(receita);
                 }
             }
@@ -162,4 +161,44 @@ public class ProdutoService implements IProdutoService {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
+    @Transactional
+    public ResponseEntity<?> confeccionaProduto(Long id, int quantidade) throws NoSuchElementException {
+
+        List<IngredienteDTO> receita = receitaRepository.findIngredientesByProdutoId(id);
+        List<MateriaPrimaParaConsumoDTO> estoque = materiaPrimaRepository.materiasPrimasParaConfeccao(
+                receita.stream().map(IngredienteDTO::getId).collect(Collectors.toList()));
+        List<IngredienteDTO> ingredientesFaltantes = null;
+
+        for (IngredienteDTO ingrediente : receita) {
+
+            BigDecimal quantidadeNecessaria = ingrediente.getQuantidade().multiply(BigDecimal.valueOf(quantidade));
+
+            MateriaPrimaParaConsumoDTO materiaPrima = estoque.stream()
+                    .filter(mp -> mp.getId().equals(ingrediente.getId()))
+                    .findFirst()
+                    .orElseThrow(() -> new NoSuchElementException("Ingrediente não encontrado no estoque: " + ingrediente.getId()));
+
+            if (materiaPrima.getQuantidadeEstoque().compareTo(quantidadeNecessaria) < 0) {
+                ingredientesFaltantes.add(ingrediente);
+            }
+        }
+
+        if(ingredientesFaltantes != null)
+            return new ResponseEntity<>(ingredientesFaltantes, HttpStatus.UNAUTHORIZED);
+        else {
+            for (IngredienteDTO ingrediente : receita) {
+                BigDecimal quantidadeNecessaria = ingrediente.getQuantidade().multiply(BigDecimal.valueOf(quantidade));
+
+                ResponseEntity<?> response = materiaPrimaService.consumirMateriaPrima(ingrediente.getId(), quantidadeNecessaria);
+
+                if (response.getStatusCode() != HttpStatus.OK) {
+                    return ResponseEntity.badRequest().body("Erro ao consumir matéria-prima para o ingrediente de id: " + ingrediente.getId());
+                }
+            }
+            produtoRepository.adicionarProduto(id, quantidade);
+        }
+
+        return new ResponseEntity<>(HttpStatus.OK);
+
+    }
 }

@@ -52,4 +52,10 @@ public class ProdutoController {
     public ResponseEntity<?> ativaDesativaProduto(@RequestParam ("id") Long id) throws NoSuchElementException {
         return produtoService.ativaDesativaProduto(id);
     }
+
+    @PatchMapping("/confeccionaProdutos")
+    public ResponseEntity<?> confeccionaProduto(@RequestParam ("id") Long id,
+                                                @RequestParam ("quantidade") int quantidade) throws NoSuchElementException {
+        return produtoService.confeccionaProduto(id, quantidade);
+    }
 }
