@@ -69,8 +69,6 @@ public class ProdutoService implements IProdutoService {
         }
 
     }
-
-
     public ResponseEntity<Produto> cadastraProduto(CadastroProdutoDTO dto) throws Exception {
 
         try {
@@ -83,10 +81,6 @@ public class ProdutoService implements IProdutoService {
                 produto.setCategoria(dto.getCategoria());
                 produto.setAvaliacao(dto.getAvaliacao());
                 produtoRepository.save(produto);
-
-//                for(MultipartFile imagem : dto.getImagens()){
-//                    uploadImage(imagem, produto);
-//                }
 
                 if (dto.getImagemPrincipal() != null) {
                     uploadImage(dto.getImagemPrincipal(), produto, true);
