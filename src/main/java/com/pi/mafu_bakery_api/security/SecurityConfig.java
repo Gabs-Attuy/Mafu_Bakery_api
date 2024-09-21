@@ -48,6 +48,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/buscaUsuario").hasAuthority("ADMINISTRADOR")
                         .requestMatchers(HttpMethod.GET, "/api/produtos/recuperaProduto").hasAnyAuthority("ADMINISTRADOR", "ESTOQUISTA")
                         .requestMatchers(HttpMethod.GET, "/api/produtos/listagem").hasAnyAuthority("ADMINISTRADOR", "ESTOQUISTA")
+                        .requestMatchers(HttpMethod.GET, "/api/produtos/buscarNome").hasAuthority("ADMINISTRADOR")
+                        .requestMatchers(HttpMethod.GET, "/api/produtos/exibicao").hasAuthority("ADMINISTRADOR")
                         .requestMatchers(HttpMethod.GET, "/api/produtos").permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
