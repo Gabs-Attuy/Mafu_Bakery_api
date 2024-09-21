@@ -31,8 +31,10 @@ public class ProdutoController {
     @PostMapping("/cadastrar")
     public ResponseEntity<Produto> cadastraProduto(
             @RequestPart("produto") CadastroProdutoDTO produtoDTO,
+            @RequestPart("imagemPrincipal") MultipartFile imagemPrincipal,
             @RequestPart("imagens") List<MultipartFile> imagens) throws Exception {
 
+        produtoDTO.setImagemPrincipal(imagemPrincipal);
         produtoDTO.setImagens(imagens);
         return produtoService.cadastraProduto(produtoDTO);
     }
@@ -54,11 +56,13 @@ public class ProdutoController {
         return produtoService.ativaDesativaProduto(id);
     }
 
+
     @PatchMapping("/confeccionaProdutos")
     public ResponseEntity<?> confeccionaProduto(@RequestParam ("id") Long id,
                                                 @RequestParam ("quantidade") int quantidade) throws NoSuchElementException {
         return produtoService.confeccionaProduto(id, quantidade);
     }
+
 
     @GetMapping("/buscarNome")
     public ResponseEntity<Map<String, Object>> buscarProdutoPorNome(

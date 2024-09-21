@@ -30,6 +30,8 @@ public class CadastroProdutoDTO {
     List<IngredienteDTO> ingredientes;
     private String categoria;
     @JsonIgnore
+    private MultipartFile imagemPrincipal;
+    @JsonIgnore
     private List<MultipartFile> imagens;
     private Double avaliacao;
 }
