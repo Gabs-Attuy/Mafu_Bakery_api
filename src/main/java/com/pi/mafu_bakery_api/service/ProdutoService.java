@@ -1,9 +1,6 @@
 package com.pi.mafu_bakery_api.service;
 
-import com.pi.mafu_bakery_api.dto.BuscaProdutoEReceitaDTO;
-import com.pi.mafu_bakery_api.dto.CadastroProdutoDTO;
-import com.pi.mafu_bakery_api.dto.IngredienteDTO;
-import com.pi.mafu_bakery_api.dto.ProdutoResumoDTO;
+import com.pi.mafu_bakery_api.dto.*;
 import com.pi.mafu_bakery_api.interfaces.IProdutoService;
 import com.pi.mafu_bakery_api.key.ReceitaKey;
 import com.pi.mafu_bakery_api.model.MateriaPrima;
@@ -59,7 +56,6 @@ public class ProdutoService implements IProdutoService {
             urlImagensModel.setProdutoId(produtoModel);
             urlRepository.save(urlImagensModel);
         }
-
     }
 
     public ResponseEntity<Produto> cadastraProduto(CadastroProdutoDTO dto) throws Exception {
@@ -148,6 +144,21 @@ public class ProdutoService implements IProdutoService {
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
+    public ResponseEntity<ExibicaoProdutoDTO> preVisualizacaoProduto(Long id) {
+        Produto produto = produtoRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Produto não encontrado!"));
+
+        ExibicaoProdutoDTO dto = new ExibicaoProdutoDTO();
+        dto.setNome(produto.getNome());
+        dto.setPreco(produto.getPreco());
+        dto.setDescricao(produto.getDescricao());
+        dto.setAvaliacao(produto.getAvaliacao());
+        dto.setImagens(produto.getUrlImagemList()
+                .stream().map(URLImagem::getUrl)
+                .collect(Collectors.toList()));
+        return new ResponseEntity<>(dto, HttpStatus.OK);
+    }
+
     public ResponseEntity<?> ativaDesativaProduto(Long id) throws NoSuchElementException {
 
         Produto produto = produtoRepository.findById(id)
@@ -183,5 +194,6 @@ public class ProdutoService implements IProdutoService {
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
 
 }
