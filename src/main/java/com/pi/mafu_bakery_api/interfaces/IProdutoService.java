@@ -14,7 +14,7 @@ public interface IProdutoService {
 
     ResponseEntity<Produto> cadastraProduto(CadastroProdutoDTO dto) throws Exception;
 
-    void uploadImage(MultipartFile imagens, Produto produtoModel) throws Exception;
+    void uploadImage(MultipartFile imagem, Produto produtoModel, boolean principal) throws Exception;
 
     ResponseEntity<Map<String, Object>> listarProdutos(int page, int size);
 
