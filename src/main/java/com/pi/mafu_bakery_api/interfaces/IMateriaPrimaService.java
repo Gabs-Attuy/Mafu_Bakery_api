@@ -21,4 +21,6 @@ public interface IMateriaPrimaService {
 
     ResponseEntity<?> ativaDesativaMateriaPrima(Long id) throws Exception;
 
+     ResponseEntity<MateriaPrima> retornoIngrediente(Long id);
+
 }

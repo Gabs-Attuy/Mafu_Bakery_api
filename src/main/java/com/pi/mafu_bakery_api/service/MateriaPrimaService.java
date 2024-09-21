@@ -1,10 +1,10 @@
 package com.pi.mafu_bakery_api.service;
 
-import com.pi.mafu_bakery_api.dto.AlteracaoMateriaPrimaDTO;
-import com.pi.mafu_bakery_api.dto.CadastroMateriaPrimaDTO;
-import com.pi.mafu_bakery_api.dto.ListaMateriaPrimaDTO;
+import com.pi.mafu_bakery_api.dto.*;
 import com.pi.mafu_bakery_api.interfaces.IMateriaPrimaService;
 import com.pi.mafu_bakery_api.model.MateriaPrima;
+import com.pi.mafu_bakery_api.model.Produto;
+import com.pi.mafu_bakery_api.model.URLImagem;
 import com.pi.mafu_bakery_api.repository.MateriaPrimaRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @Service
 public class MateriaPrimaService implements IMateriaPrimaService {
@@ -133,4 +134,10 @@ public class MateriaPrimaService implements IMateriaPrimaService {
                 dto.getPreco() == null || dto.getQuantidadeEstoque() == null;
 
     }
+
+   public ResponseEntity<MateriaPrima> retornoIngrediente(Long id) {
+        MateriaPrima materiaPrima = materiaPrimaRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Matéria prima não encontrada!"));
+        return new ResponseEntity<>(materiaPrima, HttpStatus.OK);
+   }
 }
