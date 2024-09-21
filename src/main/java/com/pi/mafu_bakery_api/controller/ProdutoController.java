@@ -2,6 +2,7 @@ package com.pi.mafu_bakery_api.controller;
 
 import com.pi.mafu_bakery_api.dto.BuscaProdutoEReceitaDTO;
 import com.pi.mafu_bakery_api.dto.CadastroProdutoDTO;
+import com.pi.mafu_bakery_api.dto.ExibicaoProdutoDTO;
 import com.pi.mafu_bakery_api.dto.ProdutoResumoDTO;
 import com.pi.mafu_bakery_api.model.Produto;
 import com.pi.mafu_bakery_api.service.ProdutoService;
@@ -54,11 +55,25 @@ public class ProdutoController {
     public ResponseEntity<?> ativaDesativaProduto(@RequestParam ("id") Long id) throws NoSuchElementException {
         return produtoService.ativaDesativaProduto(id);
     }
+
+
+    @PatchMapping("/confeccionaProdutos")
+    public ResponseEntity<?> confeccionaProduto(@RequestParam ("id") Long id,
+                                                @RequestParam ("quantidade") int quantidade) throws NoSuchElementException {
+        return produtoService.confeccionaProduto(id, quantidade);
+    }
+
+
     @GetMapping("/buscarNome")
     public ResponseEntity<Map<String, Object>> buscarProdutoPorNome(
             @RequestParam("nome") String nome,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         return produtoService.buscarProdutoPorNome(nome, page, size);
+    }
+
+    @GetMapping("/exibicao")
+    public ResponseEntity<ExibicaoProdutoDTO> preVisualizacaoProduto (@RequestParam ("id") Long id) throws NoSuchElementException {
+        return produtoService.preVisualizacaoProduto(id);
     }
 }
