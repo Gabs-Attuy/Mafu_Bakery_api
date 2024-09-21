@@ -2,6 +2,7 @@ package com.pi.mafu_bakery_api.repository;
 
 import com.pi.mafu_bakery_api.dto.ListaMateriaPrimaDTO;
 import com.pi.mafu_bakery_api.dto.ListaUsuariosDTO;
+import com.pi.mafu_bakery_api.dto.MateriaPrimaParaConsumoDTO;
 import com.pi.mafu_bakery_api.model.MateriaPrima;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -10,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 public interface MateriaPrimaRepository extends JpaRepository<MateriaPrima, Long> {
     @Query("SELECT new com.pi.mafu_bakery_api.dto.ListaMateriaPrimaDTO(mp.id, mp.nome, mp.quantidadeEstoque, mp.preco, mp.status, mp.unidadeMedida) " +
@@ -25,4 +27,6 @@ public interface MateriaPrimaRepository extends JpaRepository<MateriaPrima, Long
     @Query("UPDATE MateriaPrima mp SET mp.quantidadeEstoque = mp.quantidadeEstoque - :quantidadeNecessaria WHERE mp.id = :id AND mp.quantidadeEstoque >= :quantidadeNecessaria")
     void consumirMateriaPrima(@Param("id") Long id, @Param("quantidadeNecessaria") BigDecimal quantidadeNecessaria);
 
+    @Query("SELECT new com.pi.mafu_bakery_api.dto.MateriaPrimaParaConsumoDTO(mp.id, mp.nome, mp.quantidadeEstoque) FROM MateriaPrima mp WHERE mp.id IN :ids")
+    List<MateriaPrimaParaConsumoDTO> materiasPrimasParaConfeccao(@Param("ids") List<Long> ids);
 }
