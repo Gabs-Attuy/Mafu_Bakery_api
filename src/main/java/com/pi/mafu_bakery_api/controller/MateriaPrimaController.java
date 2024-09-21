@@ -54,4 +54,9 @@ public class MateriaPrimaController {
     public ResponseEntity<?> ativaDesativaMateriaPrima (@RequestParam ("id") Long id) throws NoSuchElementException {
         return materiaPrimaService.ativaDesativaMateriaPrima(id);
     }
+
+    @GetMapping("/mpPorId")
+    public ResponseEntity<MateriaPrima> retornoIngredienteById(@RequestParam ("id") Long id) throws NoSuchElementException{
+        return materiaPrimaService.retornoIngrediente(id);
+    }
 }
