@@ -28,9 +28,12 @@ import org.springframework.web.multipart.MultipartFile;
 import java.lang.reflect.Array;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.logging.Logger;
 
 @Service
 public class ProdutoService implements IProdutoService {
+
+    private static final Logger logger = Logger.getLogger(ProdutoService.class.getName());
 
     @Autowired
     private URLRepository urlRepository;
@@ -49,18 +52,23 @@ public class ProdutoService implements IProdutoService {
     public ProdutoService(BlobStorageService blobStorageService) {
         this.blobStorageService = blobStorageService;
     }
-  
-    public void uploadImage(MultipartFile imagens, Produto produtoModel) throws Exception {
 
-        if (imagens != null && !imagens.isEmpty()) {
-            String imageUrl = blobStorageService.uploadImage(imagens);
+    public void uploadImage(MultipartFile imagem, Produto produtoModel, boolean principal) throws Exception {
+
+        if (imagem != null && !imagem.isEmpty()) {
+            String imageUrl = blobStorageService.uploadImage(imagem);
             URLImagem urlImagensModel = new URLImagem();
             urlImagensModel.setUrl(imageUrl);
+            urlImagensModel.setPrincipal(principal);
             urlImagensModel.setProdutoId(produtoModel);
             urlRepository.save(urlImagensModel);
+        }else{
+            throw new Exception("Imagem inválida ou vazia!"); // Lança exceção se não houver imagem
         }
 
+
     }
+
 
     public ResponseEntity<Produto> cadastraProduto(CadastroProdutoDTO dto) throws Exception {
 
@@ -76,8 +84,27 @@ public class ProdutoService implements IProdutoService {
 
                 produtoRepository.save(produto);
 
-                for(MultipartFile imagem : dto.getImagens()){
-                    uploadImage(imagem, produto);
+//                for(MultipartFile imagem : dto.getImagens()){
+//                    uploadImage(imagem, produto);
+//                }
+
+                if (dto.getImagemPrincipal() != null) {
+                    uploadImage(dto.getImagemPrincipal(), produto, true);
+                }else {
+                    logger.warning("Imagem principal não foi adicionada");
+                }
+
+                // Salvando as imagens adicionais
+                if (dto.getImagens() != null && !dto.getImagens().isEmpty()) {
+                    for (MultipartFile imagem : dto.getImagens()) {
+                        if (imagem != null && !imagem.isEmpty()) {
+                            uploadImage(imagem, produto,false);
+                        } else {
+                            logger.warning("Imagens não fornecidas");
+                        }
+                    }
+                } else {
+                    logger.info("Nenhuma imagem adicional fornecida");
                 }
 
 //                List<Receita> receitas = new ArrayList<>();
