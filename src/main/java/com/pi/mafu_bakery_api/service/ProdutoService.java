@@ -1,9 +1,6 @@
 package com.pi.mafu_bakery_api.service;
 
-import com.pi.mafu_bakery_api.dto.BuscaProdutoEReceitaDTO;
-import com.pi.mafu_bakery_api.dto.CadastroProdutoDTO;
-import com.pi.mafu_bakery_api.dto.IngredienteDTO;
-import com.pi.mafu_bakery_api.dto.ProdutoResumoDTO;
+import com.pi.mafu_bakery_api.dto.*;
 import com.pi.mafu_bakery_api.interfaces.IProdutoService;
 import com.pi.mafu_bakery_api.key.ReceitaKey;
 import com.pi.mafu_bakery_api.model.MateriaPrima;
