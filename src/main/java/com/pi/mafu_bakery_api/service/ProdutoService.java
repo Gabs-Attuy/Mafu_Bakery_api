@@ -242,7 +242,7 @@ public class ProdutoService implements IProdutoService {
             }
         }
 
-        if(ingredientesFaltantes != null)
+        if(ingredientesFaltantes.size() > 0)
             return new ResponseEntity<>(ingredientesFaltantes, HttpStatus.UNAUTHORIZED);
         else {
             for (IngredienteDTO ingrediente : receita) {
