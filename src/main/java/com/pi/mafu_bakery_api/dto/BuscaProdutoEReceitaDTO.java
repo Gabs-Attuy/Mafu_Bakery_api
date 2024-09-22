@@ -28,8 +28,9 @@ public class BuscaProdutoEReceitaDTO {
     private String tamanho;
     @Column(nullable = false)
     List<IngredienteDTO> ingredientes;
+    private Integer quantidadeEstoque;
     private String categoria;
-    private List<String> imagens;
+    private List<ExibicaoImagemDTO> imagens;
     private Double avaliacao;
 
 }
