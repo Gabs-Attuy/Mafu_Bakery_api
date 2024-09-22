@@ -1,9 +1,6 @@
 package com.pi.mafu_bakery_api.controller;
 
-import com.pi.mafu_bakery_api.dto.BuscaProdutoEReceitaDTO;
-import com.pi.mafu_bakery_api.dto.CadastroProdutoDTO;
-import com.pi.mafu_bakery_api.dto.ExibicaoProdutoDTO;
-import com.pi.mafu_bakery_api.dto.ProdutoResumoDTO;
+import com.pi.mafu_bakery_api.dto.*;
 import com.pi.mafu_bakery_api.model.Produto;
 import com.pi.mafu_bakery_api.service.ProdutoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,5 +72,15 @@ public class ProdutoController {
     @GetMapping("/exibicao")
     public ResponseEntity<ExibicaoProdutoDTO> preVisualizacaoProduto (@RequestParam ("id") Long id) throws NoSuchElementException {
         return produtoService.preVisualizacaoProduto(id);
+    }
+
+    @PutMapping("/alterar")
+    public ResponseEntity<AlterarProdutoResDTO> alterarProduto(
+            @RequestPart AlterarProdutoReqDTO produto,
+            @RequestPart(value = "imagemPrincipal", required = false) MultipartFile imagemPrincipal,
+            @RequestPart(value = "imagensNovas", required = false) List<MultipartFile> imagensNovas) throws Exception {
+        produto.setImagemPrincipal(imagemPrincipal);
+        produto.setImagensNovas(imagensNovas);
+        return produtoService.alterarProduto(produto);
     }
 }
