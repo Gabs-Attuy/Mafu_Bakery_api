@@ -26,4 +26,15 @@ public class BlobStorageService {
 
         return blobClient.getBlobUrl();  // Retorna a URL da imagem no Blob Storage
     }
+
+    public void deleteImage(String imageUrl) {
+        String blobName = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
+        BlobClient blobClient = new BlobClientBuilder()
+                .connectionString(connectionString)
+                .containerName(containerName)
+                .blobName(blobName)
+                .buildClient();
+
+        blobClient.delete();
+    }
 }

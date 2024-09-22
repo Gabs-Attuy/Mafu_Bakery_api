@@ -260,4 +260,63 @@ public class ProdutoService implements IProdutoService {
         return new ResponseEntity<>(HttpStatus.OK);
 
     }
+
+    public ResponseEntity<AlterarProdutoResDTO> alterarProduto(AlterarProdutoReqDTO dto) throws Exception {
+        Produto produtoSalvo = produtoRepository.findById(dto.getId()).orElseThrow(
+                () -> new RuntimeException("Produto não encontrado!"));
+        produtoSalvo.setNome(dto.getNome());
+        produtoSalvo.setDescricao(dto.getDescricao());
+        produtoSalvo.setPreco(dto.getPreco());
+        produtoSalvo.setQuantidadeEstoque(dto.getQuantidadeEstoque());
+        produtoSalvo.setCategoria(dto.getCategoria());
+        produtoSalvo.setTamanho(dto.getTamanho());
+        produtoSalvo.setAvaliacao(dto.getAvaliacao());
+        produtoRepository.save(produtoSalvo);
+        if (!dto.getUrlImagensExcluidas().isEmpty()) {
+            for (String url : dto.getUrlImagensExcluidas()){
+                URLImagem imagemSalva = urlRepository.findByUrl(url, dto.getId());
+                urlRepository.delete(imagemSalva);
+                blobStorageService.deleteImage(url);
+            }
+        }
+        if (dto.getImagemPrincipal() != null) {
+            try {
+                URLImagem imagemPrincipal = urlRepository.findImagemPrincipal(dto.getId());
+                urlRepository.delete(imagemPrincipal);
+                saveImage(dto.getImagemPrincipal(), produtoSalvo, true);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        if (dto.getImagensNovas() != null && !dto.getImagensNovas().isEmpty()) {
+            for (MultipartFile imagem : dto.getImagensNovas()) {
+                if (imagem != null && !imagem.isEmpty()) {
+                    saveImage(imagem, produtoSalvo,false);
+                } else {
+                    logger.warning("Imagem adicional fornecida está vazia ou nula");
+                }
+            }
+        } else {
+            logger.info("Nenhuma imagem adicional fornecida");
+        }
+
+        Produto produtoAtualizado = produtoRepository.findById(dto.getId()).orElseThrow(
+                () -> new Exception("Produto não encontrado"));
+        AlterarProdutoResDTO produtoAlterado = new AlterarProdutoResDTO(produtoAtualizado);
+
+        return new ResponseEntity<>(produtoAlterado, HttpStatus.OK);
+    }
+
+    private void saveImage(MultipartFile imagem, Produto produtoModel, boolean isPrincipal) throws Exception {
+        if (imagem != null && !imagem.isEmpty()) {
+            String imageUrl = blobStorageService.uploadImage(imagem);
+            URLImagem urlImagensModel = new URLImagem();
+            urlImagensModel.setUrl(imageUrl);
+            urlImagensModel.setPrincipal(isPrincipal);
+            urlImagensModel.setProdutoId(produtoModel);
+            urlRepository.save(urlImagensModel);
+        } else {
+            logger.warning("Imagem fornecida está vazia ou nula");
+        }
+    }
 }
