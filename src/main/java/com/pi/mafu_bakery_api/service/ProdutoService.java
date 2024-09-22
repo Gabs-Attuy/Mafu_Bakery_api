@@ -160,8 +160,9 @@ public class ProdutoService implements IProdutoService {
         dto.setPreco(produto.getPreco());
         dto.setTamanho(produto.getTamanho());
         dto.setIngredientes(ingredientes);
+        dto.setQuantidadeEstoque(produto.getQuantidadeEstoque());
         dto.setImagens(produto.getUrlImagemList()
-                .stream().map(URLImagem::getUrl)
+                .stream().map(URLImagem -> new ExibicaoImagemDTO(URLImagem.getUrl(), URLImagem.getPrincipal()))
                 .collect(Collectors.toList()));
 
         return new ResponseEntity<>(dto, HttpStatus.OK);
@@ -225,7 +226,7 @@ public class ProdutoService implements IProdutoService {
         List<IngredienteDTO> receita = receitaRepository.findIngredientesByProdutoId(id);
         List<MateriaPrimaParaConsumoDTO> estoque = materiaPrimaRepository.materiasPrimasParaConfeccao(
                 receita.stream().map(IngredienteDTO::getId).collect(Collectors.toList()));
-        List<IngredienteDTO> ingredientesFaltantes = null;
+        List<MateriaPrimaParaConsumoDTO> ingredientesFaltantes = new ArrayList<>();
 
         for (IngredienteDTO ingrediente : receita) {
 
@@ -237,7 +238,7 @@ public class ProdutoService implements IProdutoService {
                     .orElseThrow(() -> new NoSuchElementException("Ingrediente não encontrado no estoque: " + ingrediente.getId()));
 
             if (materiaPrima.getQuantidadeEstoque().compareTo(quantidadeNecessaria) < 0) {
-                ingredientesFaltantes.add(ingrediente);
+                ingredientesFaltantes.add(materiaPrima);
             }
         }
 
