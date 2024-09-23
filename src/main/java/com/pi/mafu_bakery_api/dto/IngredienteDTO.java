@@ -1,28 +1,21 @@
-package com.pi.mafu_bakery_api.model;
+package com.pi.mafu_bakery_api.dto;
 
-import com.pi.mafu_bakery_api.key.ReceitaKey;
 import jakarta.persistence.Column;
-import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.Entity;
 import jakarta.validation.constraints.Digits;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter @Setter
-@Entity
-@Component
-public class Receita {
+public class IngredienteDTO {
 
-    @EmbeddedId
-    private ReceitaKey id;
+    private Long id;
     @Column(nullable = false)
     @Digits(integer = 2, fraction = 3)
-    private BigDecimal quantidadeNecessaria;
+    private BigDecimal quantidade;
 }

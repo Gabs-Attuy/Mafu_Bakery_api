@@ -52,7 +52,7 @@ public class UsuarioController {
         return usuarioService.listarPedidos();
     }
 
-    @PutMapping("/ativaDesativaUsuario")
+    @PatchMapping("/ativaDesativaUsuario")
     public ResponseEntity<?> ativaDesativaUsuario(@RequestParam ("id") Long id) throws Exception {
         return usuarioService.ativaDesativaUsuario(id);
     }

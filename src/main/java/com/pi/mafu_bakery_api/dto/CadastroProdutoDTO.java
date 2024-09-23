@@ -1,38 +1,37 @@
-package com.pi.mafu_bakery_api.model;
+package com.pi.mafu_bakery_api.dto;
 
-import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.pi.mafu_bakery_api.model.MateriaPrima;
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.Digits;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter @Setter
-@Entity
-public class Produto {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class CadastroProdutoDTO {
+
     @Column(nullable = false, length = 200)
     private String nome;
     @Column(nullable = false, length = 2000)
     private String descricao;
-    @Column(nullable = false)
-    @Digits(integer = 5, fraction = 2)
+    @Digits(integer = 3, fraction = 2)
     private BigDecimal preco;
     @Column(nullable = false)
     private String tamanho;
-    private Integer quantidadeEstoque = 0;
-    private Boolean status = true;
     @Column(nullable = false)
+    List<IngredienteDTO> ingredientes;
     private String categoria;
-    @OneToMany(mappedBy = "produtoId", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<URLImagem> urlImagemList;
-    @Column(nullable = false)
+    @JsonIgnore
+    private MultipartFile imagemPrincipal;
+    @JsonIgnore
+    private List<MultipartFile> imagens;
     private Double avaliacao;
 }

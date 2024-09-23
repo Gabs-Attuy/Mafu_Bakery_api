@@ -6,7 +6,6 @@ import com.pi.mafu_bakery_api.interfaces.IUsuarioService;
 import com.pi.mafu_bakery_api.model.*;
 import com.pi.mafu_bakery_api.repository.*;
 import com.pi.mafu_bakery_api.security.ProvedorTokenJWT;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -125,13 +124,14 @@ public class UsuarioService implements IUsuarioService {
         return null;
     }
 
+    @Transactional
     public ResponseEntity<?> alterarUsuario(String  email, AlteracaoDTO dto) throws Exception {
 
         Credencial credencial = credencialRepository.findUsuarioByEmail(email);
         Usuario usuario = usuarioRepository.findById(credencial.getUsuario().getId()).orElseThrow( () -> new Exception("usuario nao encontrado"));
 
         if(usuario != null){
-            if(dto.getNome() != null){
+            if(dto.getNome() != null && !dto.getNome().equals(usuario.getNome())){
                 usuario.setNome(dto.getNome());
             }
             if(dto.getCpf() != null && !dto.getCpf().equals(usuario.getCpf())){
@@ -141,13 +141,13 @@ public class UsuarioService implements IUsuarioService {
                 }
                 usuario.setCpf(dto.getCpf());
             }
-            if(dto.getSenha() != null) {
+            if(dto.getSenha() != null && !dto.getSenha().isEmpty()) {
                 if (new BCryptPasswordEncoder().matches(dto.getSenha(), credencial.getSenha())){
                     return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
                 }
                 credencial.setSenha(encryptPassword(dto.getSenha()));
             }
-            if(dto.getPermissao() != null) {
+            if(dto.getPermissao() != null && !dto.getPermissao().equals(credencial.getPermissao().getPermissao())) {
                 RoleEnum roleEnum = RoleEnum.valueOf(String.valueOf(dto.getPermissao()));
                 Permissao permissao = permissaoRepository.findPermissaoByNome(roleEnum);
                 credencial.setPermissao(permissao);
@@ -167,11 +167,7 @@ public class UsuarioService implements IUsuarioService {
 
         Credencial credencial = credencialRepository.findByIdUsuario(id);
         if(credencial != null) {
-            if(credencial.getIsEnabled()){
-                credencial.setIsEnabled(false);
-            } else {
-                credencial.setIsEnabled(true);
-            }
+            credencial.setIsEnabled(!credencial.getIsEnabled());
             credencialRepository.save(credencial);
             return new ResponseEntity<>(HttpStatus.OK);
         }
