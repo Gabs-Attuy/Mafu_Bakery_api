@@ -20,7 +20,6 @@ public class AlteracaoMateriaPrimaDTO {
     private String descricao;
     @Digits(integer = 5, fraction = 2)
     private BigDecimal preco;
-    @Digits(integer = 5, fraction = 3)
-    private BigDecimal quantidade;
+    private String unidadeMedida;
 
 }

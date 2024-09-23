@@ -124,13 +124,14 @@ public class UsuarioService implements IUsuarioService {
         return null;
     }
 
+    @Transactional
     public ResponseEntity<?> alterarUsuario(String  email, AlteracaoDTO dto) throws Exception {
 
         Credencial credencial = credencialRepository.findUsuarioByEmail(email);
         Usuario usuario = usuarioRepository.findById(credencial.getUsuario().getId()).orElseThrow( () -> new Exception("usuario nao encontrado"));
 
         if(usuario != null){
-            if(dto.getNome() != null){
+            if(dto.getNome() != null && !dto.getNome().equals(usuario.getNome())){
                 usuario.setNome(dto.getNome());
             }
             if(dto.getCpf() != null && !dto.getCpf().equals(usuario.getCpf())){
@@ -140,13 +141,13 @@ public class UsuarioService implements IUsuarioService {
                 }
                 usuario.setCpf(dto.getCpf());
             }
-            if(dto.getSenha() != null) {
+            if(dto.getSenha() != null && !dto.getSenha().isEmpty()) {
                 if (new BCryptPasswordEncoder().matches(dto.getSenha(), credencial.getSenha())){
                     return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
                 }
                 credencial.setSenha(encryptPassword(dto.getSenha()));
             }
-            if(dto.getPermissao() != null) {
+            if(dto.getPermissao() != null && !dto.getPermissao().equals(credencial.getPermissao().getPermissao())) {
                 RoleEnum roleEnum = RoleEnum.valueOf(String.valueOf(dto.getPermissao()));
                 Permissao permissao = permissaoRepository.findPermissaoByNome(roleEnum);
                 credencial.setPermissao(permissao);

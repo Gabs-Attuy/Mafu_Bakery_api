@@ -54,20 +54,25 @@ public class MateriaPrimaService implements IMateriaPrimaService {
 
     }
 
+    @Transactional
     public ResponseEntity<?> alterarMateriaPrima(Long id, AlteracaoMateriaPrimaDTO dto) throws NoSuchElementException {
 
         MateriaPrima materiaPrima = materiaPrimaRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Matéria prima não encontrada!"));
 
         if(materiaPrima != null) {
-            if(dto.getNome() != null)
+
+            if(dto.getNome() != null && !dto.getNome().equals(materiaPrima.getNome()))
                 materiaPrima.setNome(dto.getNome());
 
-            if(dto.getDescricao() != null)
+            if(dto.getDescricao() != null && !dto.getDescricao().equals(materiaPrima.getDescricao()))
                 materiaPrima.setDescricao(dto.getDescricao());
 
-            if(dto.getPreco() != null)
+            if(dto.getPreco() != null && dto.getPreco().compareTo(materiaPrima.getPreco()) != 0)
                 materiaPrima.setPreco(dto.getPreco());
+
+            if (dto.getUnidadeMedida() != null && !dto.getUnidadeMedida().equals(materiaPrima.getUnidadeMedida()))
+                materiaPrima.setUnidadeMedida(dto.getUnidadeMedida());
 
             materiaPrimaRepository.save(materiaPrima);
 
