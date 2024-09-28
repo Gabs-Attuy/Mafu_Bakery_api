@@ -182,6 +182,27 @@ public class ProdutoService implements IProdutoService {
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
+    public ResponseEntity<List<ExibicaoProdutoDTO>> preVisualizacaoTodosProdutos() {
+        List<Produto> produtos = produtoRepository.findAll();
+
+        List<ExibicaoProdutoDTO> produtosDTO = produtos.stream().map(produto -> {
+            ExibicaoProdutoDTO dto = new ExibicaoProdutoDTO();
+            dto.setId(produto.getId());
+            dto.setNome(produto.getNome());
+            dto.setPreco(produto.getPreco());
+            dto.setStatus(produto.getStatus());
+            dto.setDescricao(produto.getDescricao());
+            dto.setAvaliacao(produto.getAvaliacao());
+            dto.setImagens(produto.getUrlImagemList()
+                    .stream().map(URLImagem::getUrl)
+                    .collect(Collectors.toList()));
+            return dto;
+        }).collect(Collectors.toList());
+
+        return new ResponseEntity<>(produtosDTO, HttpStatus.OK);
+    }
+
+
     public ResponseEntity<?> ativaDesativaProduto(Long id) throws NoSuchElementException {
 
         Produto produto = produtoRepository.findById(id)
