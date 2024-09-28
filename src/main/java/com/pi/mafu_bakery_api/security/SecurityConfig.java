@@ -54,6 +54,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/mp/mpPorId").hasAnyAuthority("ADMINISTRADOR", "ESTOQUISTA")
                         .requestMatchers(HttpMethod.GET, "/api/produtos/alterar").hasAuthority("ADMINISTRADOR")
                         .requestMatchers(HttpMethod.GET, "/api/produtos").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/produtos/exibirTodos").permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .cors(withDefaults()); // Adiciona suporte a CORS

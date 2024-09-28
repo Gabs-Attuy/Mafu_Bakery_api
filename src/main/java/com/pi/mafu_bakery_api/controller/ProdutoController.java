@@ -86,4 +86,9 @@ public class ProdutoController {
         return produtoService.alterarProduto(id, produto);
     }
 
+    @GetMapping("/exibirTodos")
+    public ResponseEntity<List<ExibicaoProdutoDTO>> preVisualizarTodos() {
+        return produtoService.preVisualizacaoTodosProdutos();
+    }
+
 }
