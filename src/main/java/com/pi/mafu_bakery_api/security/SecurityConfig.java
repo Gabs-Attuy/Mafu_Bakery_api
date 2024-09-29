@@ -26,15 +26,16 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain (HttpSecurity http) throws Exception {
 
         final String [] ENDPOINTS_LIBERADOS = {
+                "/api/usuario",
                 "/api/auth/signin",
                 "/api/cliente",
                 "/api/usuarioLogado",
                 "/api/produtos",
-                "/api/produtos/exibirTodos"
+                "/api/produtos/exibirTodos",
+                "/api/produtos/exibicao"
         };
 
         final String [] ENDPOINTS_ADMINISTRADOR = {
-                "/api/usuario",
                 "/api/mp",
                 "/api/ativaDesativaUsuario",
                 "/api/alterarUsuario",
@@ -45,7 +46,7 @@ public class SecurityConfig {
                 "/api/produtos/alterar",
                 "/api/usuariosPorPesquisa",
                 "/api/buscaUsuario",
-                "/api/produtos/exibicao",
+//                "/api/produtos/exibicao",
                 "/api/produtos/alterar"
         };
 
