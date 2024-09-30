@@ -194,6 +194,7 @@ public class ProdutoService implements IProdutoService {
             dto.setStatus(produto.getStatus());
             dto.setDescricao(produto.getDescricao());
             dto.setAvaliacao(produto.getAvaliacao());
+            dto.setQuantidadeEstoque(produto.getQuantidadeEstoque());
             dto.setImagens(produto.getUrlImagemList()
                     .stream().map(URLImagem::getUrl)
                     .collect(Collectors.toList()));
