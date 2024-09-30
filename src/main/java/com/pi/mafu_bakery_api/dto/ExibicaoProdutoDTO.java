@@ -20,4 +20,5 @@ public class ExibicaoProdutoDTO {
     private BigDecimal preco;
     private List<String> imagens;
     private Boolean status;
+    private Integer quantidadeEstoque;
 }
