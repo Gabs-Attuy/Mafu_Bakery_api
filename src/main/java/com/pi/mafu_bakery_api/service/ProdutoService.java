@@ -68,6 +68,7 @@ public class ProdutoService implements IProdutoService {
         }
 
     }
+
     public ResponseEntity<Produto> cadastraProduto(CadastroProdutoDTO dto) throws Exception {
 
         try {
@@ -283,7 +284,7 @@ public class ProdutoService implements IProdutoService {
 
     @Transactional
     public ResponseEntity<?> alterarProduto(Long id, AlterarProdutoReqDTO dto) throws Exception {
-        //Exemplo de url retornada com o produto: "https://mafubakeryblob.blob.core.windows.net/images/TortaDeFrangoSeca.png"
+
         Produto produtoSalvo = produtoRepository.findById(id).orElseThrow(
                 () -> new RuntimeException("Produto não encontrado!"));
 
@@ -311,66 +312,35 @@ public class ProdutoService implements IProdutoService {
                 if (imagemSalva != null) {
                     urlRepository.deleteById(imagemSalva.getId());
                     produtoSalvo.getUrlImagemList().remove(imagemSalva);
-                    logger.info("Imagem teóricamente excluída.");
+                    logger.info("Imagem excluída.");
                 } else {
                     logger.warning("Imagem não encontrada para a URL: " + url);
                 }
             }
         }
 
+        if (dto.getImagemPrincipal() != null) {
+            uploadImage(dto.getImagemPrincipal(), produtoSalvo, true);
+        }else {
+            logger.warning("Imagem principal não foi alterada.");
+        }
+
+        if (dto.getImagensNovas() != null && !dto.getImagensNovas().isEmpty()) {
+            for (MultipartFile imagem : dto.getImagensNovas()) {
+                if (imagem != null && !imagem.isEmpty()) {
+                    uploadImage(imagem, produtoSalvo,false);
+                } else {
+                    logger.warning("Imagem adicional fornecida está vazia ou nula");
+                }
+            }
+        } else {
+            logger.info("Nenhuma imagem adicional fornecida");
+        }
+
         produtoRepository.save(produtoSalvo);
-//
-//        if (dto.getImagemPrincipal() != null) {
-//            try {
-//                URLImagem imagemPrincipal = urlRepository.findImagemPrincipal(id);
-//                if(!validaNomeImagem(imagemPrincipal.getUrl(), dto.getImagemPrincipal().getOriginalFilename())) {
-//                    urlRepository.delete(imagemPrincipal);
-//                    blobStorageService.deleteImage(imagemPrincipal.getUrl());
-//                    saveImage(dto.getImagemPrincipal(), produtoSalvo, true);
-//                }
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//        }
-//
-//        if (dto.getImagensNovas() != null && !dto.getImagensNovas().isEmpty()) {
-//            for (MultipartFile imagem : dto.getImagensNovas()) {
-//                if (imagem != null && !imagem.isEmpty()) {
-//                    saveImage(imagem, produtoSalvo,false);
-//                } else {
-//                    logger.warning("Imagem adicional fornecida está vazia ou nula");
-//                }
-//            }
-//        } else {
-//            logger.info("Nenhuma imagem adicional fornecida");
-//        }
 
         return new ResponseEntity<>(HttpStatus.OK);
 
     }
 
-    private boolean validaNomeImagem(String url, String originalFilename) {
-        int index = url.indexOf("images/");
-
-        if (index != -1) {
-            String imagemNaUrl = url.substring(index + 7);
-
-            return imagemNaUrl.equals(originalFilename);
-        }
-
-        return false;
-    }
-
-    private void saveImage(MultipartFile imagem, Produto produtoModel, boolean isPrincipal) throws Exception {
-        if (imagem != null && !imagem.isEmpty()) {
-            String imageUrl = blobStorageService.uploadImage(imagem);
-            URLImagem urlImagensModel = new URLImagem();
-            urlImagensModel.setUrl(imageUrl);
-            urlImagensModel.setPrincipal(isPrincipal);
-            urlImagensModel.setProdutoId(produtoModel);
-            urlRepository.save(urlImagensModel);
-        } else {
-            logger.warning("Imagem fornecida está vazia ou nula");
-        }
-    }
 }
