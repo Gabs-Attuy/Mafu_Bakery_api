@@ -19,13 +19,13 @@ public class AlterarProdutoReqDTO {
     private String descricao;
     private BigDecimal preco;
     private String tamanho;
-    List<IngredienteDTO> ingredientes;
+    private List<IngredienteDTO> ingredientes;
     private Double avaliacao;
     private String categoria;
-//    @JsonIgnore
-//    private MultipartFile imagemPrincipal;
-//    @JsonIgnore
-//    private List<MultipartFile> imagensNovas;
+    @JsonIgnore
+    private MultipartFile imagemPrincipal;
+    @JsonIgnore
+    private List<MultipartFile> imagensNovas;
     private List<String> urlImagensExcluidas;
 
 }

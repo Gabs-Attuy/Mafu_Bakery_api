@@ -78,11 +78,11 @@ public class ProdutoController {
     @PatchMapping(path = "/alterar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> alterarProduto(
             @RequestParam ("id") Long id,
-            @RequestPart AlterarProdutoReqDTO produto) throws Exception {
-//            @RequestPart(value = "imagemPrincipal", required = false) MultipartFile imagemPrincipal,
-//            @RequestPart(value = "imagensNovas", required = false) List<MultipartFile> imagensNovas) throws Exception {
-//        produto.setImagemPrincipal(imagemPrincipal);
-//        produto.setImagensNovas(imagensNovas);
+            @RequestPart AlterarProdutoReqDTO produto,
+            @RequestPart(value = "imagemPrincipal", required = false) MultipartFile imagemPrincipal,
+            @RequestPart(value = "imagensNovas", required = false) List<MultipartFile> imagensNovas) throws Exception {
+        produto.setImagemPrincipal(imagemPrincipal);
+        produto.setImagensNovas(imagensNovas);
         return produtoService.alterarProduto(id, produto);
     }
 
