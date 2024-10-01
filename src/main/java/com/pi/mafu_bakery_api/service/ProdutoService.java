@@ -173,6 +173,9 @@ public class ProdutoService implements IProdutoService {
                 .orElseThrow(() -> new NoSuchElementException("Produto não encontrado!"));
 
         ExibicaoProdutoDTO dto = new ExibicaoProdutoDTO();
+        dto.setId(produto.getId());
+        dto.setQuantidadeEstoque(produto.getQuantidadeEstoque());
+        dto.setStatus(produto.getStatus());
         dto.setNome(produto.getNome());
         dto.setPreco(produto.getPreco());
         dto.setDescricao(produto.getDescricao());
