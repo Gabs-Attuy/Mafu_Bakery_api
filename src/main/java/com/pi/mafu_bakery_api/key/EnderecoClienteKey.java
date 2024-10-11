@@ -1,7 +1,7 @@
 package com.pi.mafu_bakery_api.key;
 
+import com.pi.mafu_bakery_api.model.Cliente;
 import com.pi.mafu_bakery_api.model.Endereco;
-import com.pi.mafu_bakery_api.model.Usuario;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -12,13 +12,13 @@ import lombok.*;
 @Getter @Setter
 @Embeddable
 @EqualsAndHashCode
-public class EnderecoUsuarioKey {
+public class EnderecoClienteKey {
 
     @ManyToOne
-    @JoinColumn(name = "fk_endereco_id")
-    private Endereco endereco_id;
+    @JoinColumn(name = "fk_enderecoId")
+    private Endereco enderecoId;
     @ManyToOne
-    @JoinColumn(name = "fk_usuario_id")
-    private Usuario usuario_id;
+    @JoinColumn(name = "fk_usuarioId")
+    private Cliente clienteId;
 
 }

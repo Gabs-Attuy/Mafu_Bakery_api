@@ -1,6 +1,6 @@
 package com.pi.mafu_bakery_api.model;
 
-import com.pi.mafu_bakery_api.key.CarrinhoProdutoKey;
+import com.pi.mafu_bakery_api.key.EnderecoClienteKey;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import lombok.AllArgsConstructor;
@@ -14,9 +14,9 @@ import org.springframework.stereotype.Component;
 @Getter @Setter
 @Entity
 @Component
-public class CarrinhoProduto {
+public class EnderecoCliente {
 
     @EmbeddedId
-    private CarrinhoProdutoKey id;
-    private Integer quantidade;
+    private EnderecoClienteKey id;
+
 }
