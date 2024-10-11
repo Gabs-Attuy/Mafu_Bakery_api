@@ -13,9 +13,12 @@ import java.util.List;
 @Getter @Setter
 public class ExibicaoProdutoDTO {
 
+    private Long id;
     private String nome;
     private String descricao;
     private Double avaliacao;
     private BigDecimal preco;
     private List<String> imagens;
+    private Boolean status;
+    private Integer quantidadeEstoque;
 }

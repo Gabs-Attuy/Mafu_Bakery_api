@@ -68,6 +68,7 @@ public class ProdutoService implements IProdutoService {
         }
 
     }
+
     public ResponseEntity<Produto> cadastraProduto(CadastroProdutoDTO dto) throws Exception {
 
         try {
@@ -172,6 +173,9 @@ public class ProdutoService implements IProdutoService {
                 .orElseThrow(() -> new NoSuchElementException("Produto não encontrado!"));
 
         ExibicaoProdutoDTO dto = new ExibicaoProdutoDTO();
+        dto.setId(produto.getId());
+        dto.setQuantidadeEstoque(produto.getQuantidadeEstoque());
+        dto.setStatus(produto.getStatus());
         dto.setNome(produto.getNome());
         dto.setPreco(produto.getPreco());
         dto.setDescricao(produto.getDescricao());
@@ -181,6 +185,28 @@ public class ProdutoService implements IProdutoService {
                 .collect(Collectors.toList()));
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
+
+    public ResponseEntity<List<ExibicaoProdutoDTO>> preVisualizacaoTodosProdutos() {
+        List<Produto> produtos = produtoRepository.findAll();
+
+        List<ExibicaoProdutoDTO> produtosDTO = produtos.stream().map(produto -> {
+            ExibicaoProdutoDTO dto = new ExibicaoProdutoDTO();
+            dto.setId(produto.getId());
+            dto.setNome(produto.getNome());
+            dto.setPreco(produto.getPreco());
+            dto.setStatus(produto.getStatus());
+            dto.setDescricao(produto.getDescricao());
+            dto.setAvaliacao(produto.getAvaliacao());
+            dto.setQuantidadeEstoque(produto.getQuantidadeEstoque());
+            dto.setImagens(produto.getUrlImagemList()
+                    .stream().map(URLImagem::getUrl)
+                    .collect(Collectors.toList()));
+            return dto;
+        }).collect(Collectors.toList());
+
+        return new ResponseEntity<>(produtosDTO, HttpStatus.OK);
+    }
+
 
     public ResponseEntity<?> ativaDesativaProduto(Long id) throws NoSuchElementException {
 
@@ -260,37 +286,53 @@ public class ProdutoService implements IProdutoService {
 
     }
 
-    public ResponseEntity<AlterarProdutoResDTO> alterarProduto(AlterarProdutoReqDTO dto) throws Exception {
-        Produto produtoSalvo = produtoRepository.findById(dto.getId()).orElseThrow(
+    @Transactional
+    public ResponseEntity<?> alterarProduto(Long id, AlterarProdutoReqDTO dto) throws Exception {
+
+        Produto produtoSalvo = produtoRepository.findById(id).orElseThrow(
                 () -> new RuntimeException("Produto não encontrado!"));
-        produtoSalvo.setNome(dto.getNome());
-        produtoSalvo.setDescricao(dto.getDescricao());
-        produtoSalvo.setPreco(dto.getPreco());
-        produtoSalvo.setQuantidadeEstoque(dto.getQuantidadeEstoque());
-        produtoSalvo.setCategoria(dto.getCategoria());
-        produtoSalvo.setTamanho(dto.getTamanho());
-        produtoSalvo.setAvaliacao(dto.getAvaliacao());
-        produtoRepository.save(produtoSalvo);
+
+        if(dto.getNome() != null && !dto.getNome().equals(produtoSalvo.getNome()))
+            produtoSalvo.setNome(dto.getNome());
+
+        if (dto.getDescricao() != null && !dto.getDescricao().equals(produtoSalvo.getDescricao()))
+            produtoSalvo.setDescricao(dto.getDescricao());
+
+        if(dto.getPreco() != null && dto.getPreco().compareTo(produtoSalvo.getPreco()) != 0)
+            produtoSalvo.setPreco(dto.getPreco());
+
+        if(dto.getCategoria() != null && !dto.getCategoria().equals(produtoSalvo.getCategoria()))
+            produtoSalvo.setCategoria(dto.getCategoria());
+
+        if(dto.getTamanho() != null && !dto.getTamanho().equals(produtoSalvo.getTamanho()))
+            produtoSalvo.setTamanho(dto.getTamanho());
+
+        if(dto.getAvaliacao() != null && dto.getAvaliacao().compareTo(produtoSalvo.getAvaliacao()) != 0)
+            produtoSalvo.setAvaliacao(dto.getAvaliacao());
+
         if (!dto.getUrlImagensExcluidas().isEmpty()) {
-            for (String url : dto.getUrlImagensExcluidas()){
-                URLImagem imagemSalva = urlRepository.findByUrl(url, dto.getId());
-                urlRepository.delete(imagemSalva);
-                blobStorageService.deleteImage(url);
+            for (String url : dto.getUrlImagensExcluidas()) {
+                URLImagem imagemSalva = urlRepository.findByUrl(url, id);
+                if (imagemSalva != null) {
+                    urlRepository.deleteById(imagemSalva.getId());
+                    produtoSalvo.getUrlImagemList().remove(imagemSalva);
+                    logger.info("Imagem excluída.");
+                } else {
+                    logger.warning("Imagem não encontrada para a URL: " + url);
+                }
             }
         }
+
         if (dto.getImagemPrincipal() != null) {
-            try {
-                URLImagem imagemPrincipal = urlRepository.findImagemPrincipal(dto.getId());
-                urlRepository.delete(imagemPrincipal);
-                saveImage(dto.getImagemPrincipal(), produtoSalvo, true);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            uploadImage(dto.getImagemPrincipal(), produtoSalvo, true);
+        }else {
+            logger.warning("Imagem principal não foi alterada.");
         }
+
         if (dto.getImagensNovas() != null && !dto.getImagensNovas().isEmpty()) {
             for (MultipartFile imagem : dto.getImagensNovas()) {
                 if (imagem != null && !imagem.isEmpty()) {
-                    saveImage(imagem, produtoSalvo,false);
+                    uploadImage(imagem, produtoSalvo,false);
                 } else {
                     logger.warning("Imagem adicional fornecida está vazia ou nula");
                 }
@@ -299,23 +341,10 @@ public class ProdutoService implements IProdutoService {
             logger.info("Nenhuma imagem adicional fornecida");
         }
 
-        Produto produtoAtualizado = produtoRepository.findById(dto.getId()).orElseThrow(
-                () -> new Exception("Produto não encontrado"));
-        AlterarProdutoResDTO produtoAlterado = new AlterarProdutoResDTO(produtoAtualizado);
+        produtoRepository.save(produtoSalvo);
 
-        return new ResponseEntity<>(produtoAlterado, HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
+
     }
 
-    private void saveImage(MultipartFile imagem, Produto produtoModel, boolean isPrincipal) throws Exception {
-        if (imagem != null && !imagem.isEmpty()) {
-            String imageUrl = blobStorageService.uploadImage(imagem);
-            URLImagem urlImagensModel = new URLImagem();
-            urlImagensModel.setUrl(imageUrl);
-            urlImagensModel.setPrincipal(isPrincipal);
-            urlImagensModel.setProdutoId(produtoModel);
-            urlRepository.save(urlImagensModel);
-        } else {
-            logger.warning("Imagem fornecida está vazia ou nula");
-        }
-    }
 }

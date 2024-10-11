@@ -7,6 +7,7 @@ import com.pi.mafu_bakery_api.model.Produto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
@@ -25,6 +26,8 @@ public interface IProdutoService {
     ResponseEntity<Map<String, Object>> buscarProdutoPorNome(String nome, int page, int size);
 
     ResponseEntity<ExibicaoProdutoDTO> preVisualizacaoProduto(Long id);
+
+    ResponseEntity<List<ExibicaoProdutoDTO>> preVisualizacaoTodosProdutos();
 }
 
 
