@@ -1,12 +1,10 @@
 package com.pi.mafu_bakery_api.controller;
 
 import com.pi.mafu_bakery_api.dto.*;
-import com.pi.mafu_bakery_api.model.Credencial;
 import com.pi.mafu_bakery_api.model.Pedido;
 import com.pi.mafu_bakery_api.model.Produto;
 import com.pi.mafu_bakery_api.model.Usuario;
 import com.pi.mafu_bakery_api.service.UsuarioService;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

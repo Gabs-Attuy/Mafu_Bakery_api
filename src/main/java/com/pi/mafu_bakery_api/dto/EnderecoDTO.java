@@ -1,7 +1,7 @@
-package com.pi.mafu_bakery_api.model;
+package com.pi.mafu_bakery_api.dto;
 
 import com.pi.mafu_bakery_api.enums.TipoEndereco;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,12 +10,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter @Setter
-@Entity
-public class Endereco {
+public class EnderecoDTO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
     @Column(nullable = false)
     private String cep;
     @Column(nullable = false)
