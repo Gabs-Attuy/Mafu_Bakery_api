@@ -1,8 +1,10 @@
 package com.pi.mafu_bakery_api.service;
 
+import com.pi.mafu_bakery_api.dto.AlteracaoClienteDTO;
 import com.pi.mafu_bakery_api.dto.ClienteDTO;
 import com.pi.mafu_bakery_api.dto.EnderecoDTO;
 import com.pi.mafu_bakery_api.enums.RoleEnum;
+import com.pi.mafu_bakery_api.interfaces.ICliente;
 import com.pi.mafu_bakery_api.key.EnderecoClienteKey;
 import com.pi.mafu_bakery_api.model.*;
 import com.pi.mafu_bakery_api.repository.*;
@@ -17,7 +19,7 @@ import java.util.List;
 import static com.pi.mafu_bakery_api.model.Credencial.encryptPassword;
 
 @Service
-public class ClienteService {
+public class ClienteService implements ICliente {
 
     @Autowired
     private EnderecoRepository enderecoRepository;
@@ -82,10 +84,32 @@ public class ClienteService {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    public ResponseEntity<AlteracaoClienteDTO> alterarDadosCliente(Long id, AlteracaoClienteDTO dto) throws Exception {
+        Cliente clienteAlterado = clienteRepository.findById(id).orElseThrow(
+                () -> new Exception("Cliente não encontrado com o id: " + id));
+
+        if(clienteAlterado != null) {
+            if(!checaSeOsParametrosDeEntradaNaoSaoNulos(dto)) {
+                clienteAlterado.setNomeCompleto(dto.getNomeCompleto());
+                clienteAlterado.setGenero(dto.getGenero());
+                clienteAlterado.setDataDeNascimento(dto.getDataDeNascimento());
+                clienteRepository.save(clienteAlterado);
+
+                return new ResponseEntity<>(dto, HttpStatus.OK);
+            }
+        }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
     private boolean checaSeOsParametrosDeEntradaNaoSaoNulos(ClienteDTO dto) {
         return dto == null || dto.getNomeCompleto() == null || dto.getCpf() == null ||
                 dto.getEmail() == null || dto.getDataDeNascimento() == null ||
                 dto.getGenero() == null || dto.getSenha() == null;
+    }
+
+    private boolean checaSeOsParametrosDeEntradaNaoSaoNulos(AlteracaoClienteDTO dto) {
+        return dto == null || dto.getNomeCompleto() == null || dto.getDataDeNascimento() == null ||
+                dto.getGenero() == null;
     }
 
     private boolean checaSeOsParametrosDeEntradaNaoSaoNulos(EnderecoDTO dto) {
@@ -93,5 +117,7 @@ public class ClienteService {
                 dto.getUf() == null || dto.getCep() == null || dto.getBairro() == null ||
                 dto.getCidade() == null || dto.getNumero() == null || dto.getTipo() == null;
     }
+
+
 
 }
