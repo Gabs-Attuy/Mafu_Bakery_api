@@ -33,7 +33,8 @@ public class SecurityConfig {
                 "/api/produtos",
                 "/api/produtos/exibirTodos",
                 "/api/produtos/exibicao",
-                "/api/cliente/cadastro"
+                "/api/cliente/cadastro",
+                "/api/cliente/alterarCliente"
         };
 
         final String [] ENDPOINTS_ADMINISTRADOR = {
@@ -63,6 +64,10 @@ public class SecurityConfig {
                 "/api/mp/mpPorId"
         };
 
+//        final String [] ENDPOINTS_CLIENTE = {
+//                "/api/cliente/alterarCliente/{id}"
+//        };
+
                 http
                 .csrf(csfr -> csfr.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -70,6 +75,7 @@ public class SecurityConfig {
                           .requestMatchers(ENDPOINTS_ESTOQUISTA).hasAuthority("ESTOQUISTA")
                           .requestMatchers(ENDPOINTS_ADMINISTRADOR).hasAuthority("ADMINISTRADOR")
                           .requestMatchers(ENDPOINTS_ADMINISTRADOR_ESTOQUISTA).hasAnyAuthority("ADMINISTRADOR", "ESTOQUISTA")
+//                          .requestMatchers(ENDPOINTS_CLIENTE).hasAuthority("CLIENTE")
                           .requestMatchers(ENDPOINTS_LIBERADOS).permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)

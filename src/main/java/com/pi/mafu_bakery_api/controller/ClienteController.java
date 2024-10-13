@@ -1,6 +1,7 @@
 package com.pi.mafu_bakery_api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.pi.mafu_bakery_api.dto.AlteracaoClienteDTO;
 import com.pi.mafu_bakery_api.dto.ClienteDTO;
 import com.pi.mafu_bakery_api.dto.EnderecoDTO;
 import com.pi.mafu_bakery_api.service.ClienteService;
@@ -29,5 +30,12 @@ public class ClienteController {
         List<EnderecoDTO> enderecosCliente = Arrays.asList(new ObjectMapper().readValue(enderecosJson, EnderecoDTO[].class));
 
         return clienteService.cadastro(dadosCliente, enderecosCliente);
+    }
+
+    @PutMapping("/alterarCliente")
+    public ResponseEntity<AlteracaoClienteDTO> alterarDadosCliente(@RequestParam("id") Long id,
+                                                                   @RequestBody AlteracaoClienteDTO dto) throws Exception {
+        return clienteService.alterarDadosCliente(id, dto);
+
     }
 }
