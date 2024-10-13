@@ -1,6 +1,5 @@
 package com.pi.mafu_bakery_api.dto;
 
-import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,9 +10,13 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter @Setter
-public class AlteracaoClienteDTO {
+public class ClienteInfoDTO {
 
+    private Long id;
     private String nomeCompleto;
+    private String cpf;
     private Date dataDeNascimento;
     private String genero;
+    private String email;
+
 }
