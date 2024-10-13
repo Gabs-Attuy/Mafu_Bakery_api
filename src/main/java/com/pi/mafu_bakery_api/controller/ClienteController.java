@@ -3,6 +3,7 @@ package com.pi.mafu_bakery_api.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pi.mafu_bakery_api.dto.AlteracaoClienteDTO;
 import com.pi.mafu_bakery_api.dto.ClienteDTO;
+import com.pi.mafu_bakery_api.dto.ClienteInfoDTO;
 import com.pi.mafu_bakery_api.dto.EnderecoDTO;
 import com.pi.mafu_bakery_api.service.ClienteService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,10 @@ public class ClienteController {
     public ResponseEntity<AlteracaoClienteDTO> alterarDadosCliente(@RequestParam("id") Long id,
                                                                    @RequestBody AlteracaoClienteDTO dto) throws Exception {
         return clienteService.alterarDadosCliente(id, dto);
+    }
 
+    @GetMapping("/infoCliente")
+    public ResponseEntity<ClienteInfoDTO> retornaDadosCliente(@RequestParam("email") String email) throws Exception {
+        return clienteService.retornaDadosCliente(email);
     }
 }

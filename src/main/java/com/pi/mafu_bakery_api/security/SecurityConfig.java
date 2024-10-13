@@ -34,7 +34,8 @@ public class SecurityConfig {
                 "/api/produtos/exibirTodos",
                 "/api/produtos/exibicao",
                 "/api/cliente/cadastro",
-                "/api/cliente/alterarCliente"
+                "/api/cliente/alterarCliente",
+                "/api/cliente/infoCliente"
         };
 
         final String [] ENDPOINTS_ADMINISTRADOR = {

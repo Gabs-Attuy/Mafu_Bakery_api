@@ -1,8 +1,6 @@
 package com.pi.mafu_bakery_api.service;
 
-import com.pi.mafu_bakery_api.dto.AlteracaoClienteDTO;
-import com.pi.mafu_bakery_api.dto.ClienteDTO;
-import com.pi.mafu_bakery_api.dto.EnderecoDTO;
+import com.pi.mafu_bakery_api.dto.*;
 import com.pi.mafu_bakery_api.enums.RoleEnum;
 import com.pi.mafu_bakery_api.interfaces.ICliente;
 import com.pi.mafu_bakery_api.key.EnderecoClienteKey;
@@ -41,22 +39,41 @@ public class ClienteService implements ICliente {
         if(checaSeOsParametrosDeEntradaNaoSaoNulos(clienteDTO))
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
+//        Cliente cliente = new Cliente();
+//        cliente.setNomeCompleto(clienteDTO.getNomeCompleto());
+//        cliente.setCpf(clienteDTO.getCpf());
+//        cliente.setDataDeNascimento(clienteDTO.getDataDeNascimento());
+//        cliente.setGenero(clienteDTO.getGenero());
+//        clienteRepository.save(cliente);
+//
+//        Credencial credencial = new Credencial();
+//        credencial.setCliente(cliente);
+//        credencial.setEmail(clienteDTO.getEmail());
+//        credencial.setSenha(encryptPassword(clienteDTO.getSenha()));
+//
+//        RoleEnum roleEnum = RoleEnum.CLIENTE;
+//        Permissao permissao = permissaoRepository.findPermissaoByNome(roleEnum);
+//        credencial.setPermissao(permissao);
+//        credencialRepository.save(credencial);
+        // Primeiro, salva a Credencial
+        Credencial credencial = new Credencial();
+        credencial.setEmail(clienteDTO.getEmail());
+        credencial.setSenha(encryptPassword(clienteDTO.getSenha()));
+
+        // Associa a permissão
+        RoleEnum roleEnum = RoleEnum.CLIENTE;
+        Permissao permissao = permissaoRepository.findPermissaoByNome(roleEnum);
+        credencial.setPermissao(permissao);
+        credencialRepository.save(credencial); // Salva a credencial antes para obter o ID
+
+        // Agora cria o Cliente e associa a credencial
         Cliente cliente = new Cliente();
         cliente.setNomeCompleto(clienteDTO.getNomeCompleto());
         cliente.setCpf(clienteDTO.getCpf());
         cliente.setDataDeNascimento(clienteDTO.getDataDeNascimento());
         cliente.setGenero(clienteDTO.getGenero());
-        clienteRepository.save(cliente);
-
-        Credencial credencial = new Credencial();
-        credencial.setCliente(cliente);
-        credencial.setEmail(clienteDTO.getEmail());
-        credencial.setSenha(encryptPassword(clienteDTO.getSenha()));
-
-        RoleEnum roleEnum = RoleEnum.CLIENTE;
-        Permissao permissao = permissaoRepository.findPermissaoByNome(roleEnum);
-        credencial.setPermissao(permissao);
-        credencialRepository.save(credencial);
+        cliente.setCredencial(credencial); // Associa a credencial ao cliente
+        clienteRepository.save(cliente); // Salva o cliente
 
 
         for(EnderecoDTO endereco : enderecoDTO) {
@@ -99,6 +116,24 @@ public class ClienteService implements ICliente {
             }
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+    public ResponseEntity<ClienteInfoDTO> retornaDadosCliente(String email) throws Exception {
+        ClienteBuscaDTO cliente = clienteRepository.buscarClientePorEmail(email);
+        if(cliente == null)
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        ClienteInfoDTO dto = new ClienteInfoDTO();
+
+        dto.setId(cliente.getId());
+        dto.setNomeCompleto(cliente.getNomeCompleto());
+        dto.setCpf(cliente.getCpf());
+        dto.setEmail(cliente.getEmail());
+        dto.setDataDeNascimento(cliente.getDataDeNascimento());
+        dto.setGenero(cliente.getGenero());
+
+
+        return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
     private boolean checaSeOsParametrosDeEntradaNaoSaoNulos(ClienteDTO dto) {
