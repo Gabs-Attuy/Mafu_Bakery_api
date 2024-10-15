@@ -40,7 +40,6 @@ public class Credencial implements UserDetails {
     @JoinColumn(name="permissao_id", nullable=false)
     private Permissao permissao;
 
-    //TODO: Verifcar o porque os atributos do security estao sendo enviados como nulos para o banco
     public static String encryptPassword(String password){
         return new BCryptPasswordEncoder().encode(password);
     }

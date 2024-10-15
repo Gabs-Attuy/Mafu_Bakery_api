@@ -1,7 +1,6 @@
 package com.pi.mafu_bakery_api.repository;
 
 import com.pi.mafu_bakery_api.dto.ClienteBuscaDTO;
-import com.pi.mafu_bakery_api.dto.UsuarioLogadoDTO;
 import com.pi.mafu_bakery_api.model.Cliente;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
