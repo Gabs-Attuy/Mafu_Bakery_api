@@ -66,9 +66,9 @@ public class SecurityConfig {
                 "/api/mp/mpPorId"
         };
 
-//        final String [] ENDPOINTS_CLIENTE = {
-//                "/api/cliente/alterarCliente/{id}"
-//        };
+        final String [] ENDPOINTS_CLIENTE = {
+                "/api/cliente/alteraSenha"
+        };
 
                 http
                 .csrf(csfr -> csfr.disable())
@@ -77,7 +77,7 @@ public class SecurityConfig {
                           .requestMatchers(ENDPOINTS_ESTOQUISTA).hasAuthority("ESTOQUISTA")
                           .requestMatchers(ENDPOINTS_ADMINISTRADOR).hasAuthority("ADMINISTRADOR")
                           .requestMatchers(ENDPOINTS_ADMINISTRADOR_ESTOQUISTA).hasAnyAuthority("ADMINISTRADOR", "ESTOQUISTA")
-//                          .requestMatchers(ENDPOINTS_CLIENTE).hasAuthority("CLIENTE")
+                          .requestMatchers(ENDPOINTS_CLIENTE).hasAuthority("CLIENTE")
                           .requestMatchers(ENDPOINTS_LIBERADOS).permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)

@@ -10,6 +10,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -84,6 +85,7 @@ public class ClienteService implements ICliente {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    @Transactional
     public ResponseEntity<AlteracaoClienteDTO> alterarDadosCliente(Long id, AlteracaoClienteDTO dto) throws Exception {
         Cliente clienteAlterado = clienteRepository.findById(id).orElseThrow(
                 () -> new Exception("Cliente não encontrado com o id: " + id));
@@ -119,6 +121,23 @@ public class ClienteService implements ICliente {
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
+    public ResponseEntity<?> alterarSenha(Long id, AlteraSenhaClienteDTO dto) {
+        Credencial cliente = credencialRepository.findCredencialByClienteId(id);
+
+        if(cliente == null)
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        if(checaSeOsParametrosDeEntradaNaoSaoNulos(dto))
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        if(new BCryptPasswordEncoder().matches(dto.getSenhaAtual(), cliente.getSenha())) {
+            cliente.setSenha(encryptPassword(dto.getSenhaNova()));
+            credencialRepository.save(cliente);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
     private boolean checaSeOsParametrosDeEntradaNaoSaoNulos(ClienteDTO dto) {
         return dto == null || dto.getNomeCompleto() == null || dto.getCpf() == null ||
                 dto.getEmail() == null || dto.getDataDeNascimento() == null ||
@@ -130,12 +149,14 @@ public class ClienteService implements ICliente {
                 dto.getGenero() == null;
     }
 
+    private boolean checaSeOsParametrosDeEntradaNaoSaoNulos(AlteraSenhaClienteDTO dto) {
+        return dto == null || dto.getSenhaAtual() == null || dto.getSenhaNova() == null;
+    }
+
     private boolean checaSeOsParametrosDeEntradaNaoSaoNulos(EnderecoDTO dto) {
         return dto == null || dto.getRua() == null || dto.getPrincipal() == null ||
                 dto.getUf() == null || dto.getCep() == null || dto.getBairro() == null ||
                 dto.getCidade() == null || dto.getNumero() == null || dto.getTipo() == null;
     }
-
-
 
 }
