@@ -21,4 +21,6 @@ public class EnderecoClienteKey {
     @JoinColumn(name = "fk_usuarioId")
     private Cliente clienteId;
 
+
+
 }
