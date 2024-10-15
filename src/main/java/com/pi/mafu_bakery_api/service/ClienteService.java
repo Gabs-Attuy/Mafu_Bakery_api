@@ -39,23 +39,6 @@ public class ClienteService implements ICliente {
         if(checaSeOsParametrosDeEntradaNaoSaoNulos(clienteDTO))
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
-//        Cliente cliente = new Cliente();
-//        cliente.setNomeCompleto(clienteDTO.getNomeCompleto());
-//        cliente.setCpf(clienteDTO.getCpf());
-//        cliente.setDataDeNascimento(clienteDTO.getDataDeNascimento());
-//        cliente.setGenero(clienteDTO.getGenero());
-//        clienteRepository.save(cliente);
-//
-//        Credencial credencial = new Credencial();
-//        credencial.setCliente(cliente);
-//        credencial.setEmail(clienteDTO.getEmail());
-//        credencial.setSenha(encryptPassword(clienteDTO.getSenha()));
-//
-//        RoleEnum roleEnum = RoleEnum.CLIENTE;
-//        Permissao permissao = permissaoRepository.findPermissaoByNome(roleEnum);
-//        credencial.setPermissao(permissao);
-//        credencialRepository.save(credencial);
-        // Primeiro, salva a Credencial
         Credencial credencial = new Credencial();
         credencial.setEmail(clienteDTO.getEmail());
         credencial.setSenha(encryptPassword(clienteDTO.getSenha()));
