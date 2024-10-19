@@ -26,4 +26,12 @@ public class EnderecoController {
     public ResponseEntity<List<Endereco>> retornaEnderecosCliente(@RequestParam("id") Long id) {
         return enderecoService.retornaEnderecosCliente(id);
     }
+
+    @PatchMapping("/enderecoPrincipal")
+    public ResponseEntity<Endereco> defineEnderecoPrincipal(
+            @RequestParam("enderecoId") Long enderecoId,
+            @RequestParam("clienteId") Long clienteId) {
+        return enderecoService.defineEnderecoPrincipal(enderecoId, clienteId);
+    }
+
 }
