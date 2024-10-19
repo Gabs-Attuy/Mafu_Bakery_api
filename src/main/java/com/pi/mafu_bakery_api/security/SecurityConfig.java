@@ -36,7 +36,8 @@ public class SecurityConfig {
                 "/api/cliente/cadastro",
                 "/api/cliente/alterarCliente",
                 "/api/cliente/infoCliente",
-                "/api/endereco/cadastrar"
+                "/api/endereco/cadastrar",
+                "/api/endereco/enderecosCliente"
         };
 
         final String [] ENDPOINTS_ADMINISTRADOR = {

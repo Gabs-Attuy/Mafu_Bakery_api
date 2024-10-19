@@ -15,6 +15,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
@@ -66,6 +68,27 @@ public class EnderecoService implements IEndereco {
             }
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+    public ResponseEntity<List<Endereco>> retornaEnderecosCliente(Long id) {
+        try {
+            Cliente cliente = new Cliente();
+            cliente.setId(id);
+            List<EnderecoCliente> enderecosRetornados = enderecoRepository.retornaListaEnderecosCliente(cliente);
+
+            if (!enderecosRetornados.isEmpty()) {
+                List<Endereco> enderecoModels = new ArrayList<>();
+
+                for (EnderecoCliente enderecoCliente : enderecosRetornados) {
+                    enderecoModels.add(enderecoCliente.getId().getEnderecoId());
+                }
+                return new ResponseEntity<>(enderecoModels, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception ex) {
+            System.out.println("Erro ao retornar lista de endereços: " + ex.getMessage());
+        }
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     private boolean checaSeOsParametrosDeEntradaNaoSaoNulos(EnderecoDTO dto) {
