@@ -11,4 +11,6 @@ public interface IEndereco {
     ResponseEntity<Endereco> cadastrarEnderecoClienteLogado(EnderecoDTO dto, Long id);
 
     ResponseEntity<List<Endereco>> retornaEnderecosCliente(Long id);
+
+    ResponseEntity<Endereco> defineEnderecoPrincipal(Long enderecoId, Long clienteId);
 }

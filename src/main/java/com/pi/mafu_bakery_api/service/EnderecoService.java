@@ -91,6 +91,25 @@ public class EnderecoService implements IEndereco {
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    @Transactional
+    public ResponseEntity<Endereco> defineEnderecoPrincipal(Long enderecoId, Long clienteId) {
+        Endereco endereco = enderecoRepository.findById(enderecoId).orElseThrow(
+                () -> new NoSuchElementException("Endereço não encontrado com o id: " + enderecoId));
+
+        Cliente cliente = clienteRepository.findById(clienteId).orElseThrow(
+                () -> new NoSuchElementException("Cliente não encontrado com o id: " + clienteId));
+
+        Endereco enderecoPrincipalExistente = enderecoClienteRepository.findEnderecoPrincipalPorCliente(cliente.getId());
+        if (enderecoPrincipalExistente != null) {
+            enderecoPrincipalExistente.setPrincipal(false);
+            enderecoRepository.save(enderecoPrincipalExistente);
+        }
+
+        endereco.setPrincipal(true);
+        enderecoRepository.save(endereco);
+        return new ResponseEntity<>(endereco, HttpStatus.OK);
+    }
+
     private boolean checaSeOsParametrosDeEntradaNaoSaoNulos(EnderecoDTO dto) {
         return dto == null || dto.getRua() == null || dto.getPrincipal() == null ||
                 dto.getUf() == null || dto.getCep() == null || dto.getBairro() == null ||
