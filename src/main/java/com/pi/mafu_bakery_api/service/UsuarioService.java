@@ -5,7 +5,6 @@ import com.pi.mafu_bakery_api.enums.RoleEnum;
 import com.pi.mafu_bakery_api.interfaces.IUsuarioService;
 import com.pi.mafu_bakery_api.model.*;
 import com.pi.mafu_bakery_api.repository.*;
-import com.pi.mafu_bakery_api.security.ProvedorTokenJWT;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,12 +24,6 @@ public class UsuarioService implements IUsuarioService {
 
     @Autowired
     private CredencialRepository credencialRepository;
-
-    @Autowired
-    private CarrinhoRepository carrinhoRepository;
-
-    @Autowired
-    private ProvedorTokenJWT provedorTokenJWT;
 
     @Autowired
     private PermissaoRepository permissaoRepository;
@@ -90,11 +83,6 @@ public class UsuarioService implements IUsuarioService {
         permissao.setPermissao(RoleEnum.CLIENTE);
         credencial.setPermissao(permissao);
         credencialRepository.save(credencial);
-
-        Carrinho carrinho = new Carrinho();
-        carrinho.setUsuario_id(usuario); // Use o objeto de usuário
-        carrinho.setQuantidadeItens(0);
-        carrinhoRepository.save(carrinho);
 
         return new ResponseEntity<>(HttpStatus.CREATED);
     }

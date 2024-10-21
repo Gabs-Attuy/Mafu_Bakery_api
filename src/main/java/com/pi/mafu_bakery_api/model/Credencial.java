@@ -1,7 +1,5 @@
 package com.pi.mafu_bakery_api.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -36,11 +34,12 @@ public class Credencial implements UserDetails {
     @OneToOne
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;
+    @OneToOne(mappedBy = "credencial")
+    private Cliente cliente;
     @ManyToOne
     @JoinColumn(name="permissao_id", nullable=false)
     private Permissao permissao;
 
-    //TODO: Verifcar o porque os atributos do security estao sendo enviados como nulos para o banco
     public static String encryptPassword(String password){
         return new BCryptPasswordEncoder().encode(password);
     }

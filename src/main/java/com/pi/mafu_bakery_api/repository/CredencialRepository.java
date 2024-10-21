@@ -19,4 +19,8 @@ public interface CredencialRepository extends JpaRepository<Credencial, Long> {
             JOIN c.permissao p
             WHERE c.email = :email""")
     RoleEnum findPermissaoByEmail(@Param("email") String email);
+
+    @Query("SELECT c FROM Credencial c WHERE c.cliente.id = ?1")
+    Credencial findCredencialByClienteId(Long id);
+
 }
