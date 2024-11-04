@@ -66,7 +66,8 @@ public class SecurityConfig {
         };
 
         final String [] ENDPOINTS_CLIENTE = {
-                "/api/cliente/alteraSenha"
+                "/api/cliente/alteraSenha",
+                "/api/pedidos/realizarPedido"
         };
 
                 http

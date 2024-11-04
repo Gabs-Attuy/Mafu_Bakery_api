@@ -1,14 +1,18 @@
 package com.pi.mafu_bakery_api.model;
 
 import com.pi.mafu_bakery_api.enums.FormaPagamentoEnum;
+import com.pi.mafu_bakery_api.enums.StatusPedido;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Digits;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -19,17 +23,30 @@ public class Pedido {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false)
+    @CreationTimestamp
     private LocalDateTime dataPedido;
-    @Column(nullable = false)
-    private String enderecoEnvio;
+    @UpdateTimestamp
+    private LocalDateTime dataAtualizacao;
+    @ManyToOne
+    @JoinColumn(name = "fk_endereco_envio_id", nullable = false)
+    private Endereco enderecoEnvio;
     @Column(nullable = false)
     private FormaPagamentoEnum formaPagamento;
     @Column(nullable = false)
-    private Double totalPedido;
+    @Digits(integer = 3, fraction = 2)
+    private BigDecimal frete;
+    @Column(nullable = false)
+    @Digits(integer = 5, fraction = 2)
+    private BigDecimal totalPedido;
+    @Column(nullable = false)
+    @Digits(integer = 5, fraction = 2)
+    private BigDecimal subtotal;
     @ManyToOne
-    @JoinColumn(name = "fk_usuario_id")
-    private Usuario usuarioId;
-    @OneToMany(mappedBy = "id.pedidoId", cascade = CascadeType.ALL)
-    private List<PedidoProduto> pedidoProduto;
+    @JoinColumn(name = "fk_cliente_id", nullable = false)
+    private Cliente clienteId;
+//    @OneToMany(mappedBy = "id.pedidoId", cascade = CascadeType.ALL)
+//    private List<PedidoProduto> pedidoProduto;
+    @Column(nullable = false)
+    private StatusPedido statusPedido;
+
 }
