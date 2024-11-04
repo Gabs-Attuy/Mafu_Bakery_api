@@ -5,6 +5,7 @@ import com.pi.mafu_bakery_api.model.Cliente;
 import com.pi.mafu_bakery_api.model.Endereco;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,21 +19,21 @@ import java.util.List;
 @Getter @Setter
 public class CriacaoPedidoDTO {
 
-    @NotEmpty(message = "Id do cliente obrigatório!")
+    @NotNull(message = "Id do cliente obrigatório!")
     private Long clienteId;
-    @NotEmpty(message = "Endereço de entrega obrigatório!")
+    @NotNull(message = "Endereço de entrega obrigatório!")
     private Long enderecoEntrega;
     @NotEmpty(message = "Ao menos 1 produto é necessário!")
     private List<ProdutosPedidoDTO> produtos;
-    @NotEmpty(message = "A forma de pagamento é obrigatória!")
+    @NotNull(message = "A forma de pagamento é obrigatória!")
     private FormaPagamentoEnum formaPagamento;
-    @NotEmpty(message = "O total do pedido é obrigatório!")
+    @NotNull(message = "O total do pedido é obrigatório!")
     @Digits(integer = 5, fraction = 2)
     private BigDecimal totalPedido;
-    @NotEmpty(message = "O subtotal do pedido é obrigatório!")
+    @NotNull(message = "O subtotal do pedido é obrigatório!")
     @Digits(integer = 5, fraction = 2)
     private BigDecimal subtotal;
-    @NotEmpty(message = "O valor de frete é obrigatório!")
+    @NotNull(message = "O valor de frete é obrigatório!")
     @Digits(integer = 3, fraction = 2)
     private BigDecimal frete;
 

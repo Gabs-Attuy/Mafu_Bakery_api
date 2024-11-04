@@ -6,8 +6,8 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum StatusPedido {
-    EM_ANDAMENTO("EM ANDAMENTO"),
-    EM_ROTA("EM ROTA"),
+    AGUARDANDO_PAGAMENTO("AGUARDANDO PAGAMENTO"),
+    AGUARDANDO_ENTREGA("AGUARDANDO ENTREGA"),
     ENTREGUE("ENTREGUE");
 
     private String status;

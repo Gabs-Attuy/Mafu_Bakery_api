@@ -52,7 +52,7 @@ public class PedidoService {
             pedido.setFrete(dto.getFrete());
             pedido.setTotalPedido(dto.getTotalPedido());
             pedido.setSubtotal(dto.getSubtotal());
-            pedido.setStatusPedido(StatusPedido.EM_ANDAMENTO);
+            pedido.setStatusPedido(StatusPedido.AGUARDANDO_PAGAMENTO);
 
             pedidoRepository.save(pedido);
 
