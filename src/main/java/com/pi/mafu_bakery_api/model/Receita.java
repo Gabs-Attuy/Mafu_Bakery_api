@@ -25,4 +25,5 @@ public class Receita {
     @Column(nullable = false)
     @Digits(integer = 2, fraction = 3)
     private BigDecimal quantidadeNecessaria;
+
 }
