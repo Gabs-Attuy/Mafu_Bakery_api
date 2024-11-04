@@ -36,5 +36,4 @@ public class CriacaoPedidoDTO {
     @NotNull(message = "O valor de frete é obrigatório!")
     @Digits(integer = 3, fraction = 2)
     private BigDecimal frete;
-
 }

@@ -1,8 +1,10 @@
 package com.pi.mafu_bakery_api.service;
 
 import com.pi.mafu_bakery_api.dto.CriacaoPedidoDTO;
+import com.pi.mafu_bakery_api.dto.DetalhesPedidoDTO;
 import com.pi.mafu_bakery_api.dto.ProdutosPedidoDTO;
 import com.pi.mafu_bakery_api.enums.StatusPedido;
+import com.pi.mafu_bakery_api.interfaces.IPedido;
 import com.pi.mafu_bakery_api.key.PedidoProdutoKey;
 import com.pi.mafu_bakery_api.model.*;
 import com.pi.mafu_bakery_api.repository.*;
@@ -12,10 +14,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
-public class PedidoService {
+public class PedidoService implements IPedido {
 
     @Autowired
     private ProdutoRepository produtoRepository;
@@ -85,6 +89,19 @@ public class PedidoService {
         } else {
             throw new IllegalStateException("Falha ao criar relacionamento por falta de produto em estoque.");
         }
+    }
+    public ResponseEntity<List<DetalhesPedidoDTO>> listarPedidosCliente(Long id) {
+    List<Pedido> pedidos = pedidoRepository.findAll();
 
+    List<DetalhesPedidoDTO> detalhesPedidos = new ArrayList<>();
+
+    for (Pedido pedido : pedidos) {
+
+        List<ProdutosPedidoDTO> produtos = pedidoProdutoRepository.findProdutosByPedidoId(pedido.getId());
+
+        DetalhesPedidoDTO detalhesPedidoDTO = new DetalhesPedidoDTO(pedido, produtos);
+        detalhesPedidos.add(detalhesPedidoDTO);
+    }
+        return new ResponseEntity<>(detalhesPedidos, HttpStatus.OK);
     }
 }
