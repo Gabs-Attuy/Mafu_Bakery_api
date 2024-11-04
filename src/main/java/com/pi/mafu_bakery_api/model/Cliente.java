@@ -1,5 +1,6 @@
 package com.pi.mafu_bakery_api.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -29,6 +30,7 @@ public class Cliente {
     private String genero;
     @OneToOne
     @JoinColumn(name = "credencial_id")
+    @JsonIgnore
     private Credencial credencial;
 
 }

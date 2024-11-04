@@ -44,8 +44,6 @@ public class Pedido {
     @ManyToOne
     @JoinColumn(name = "fk_cliente_id", nullable = false)
     private Cliente clienteId;
-//    @OneToMany(mappedBy = "id.pedidoId", cascade = CascadeType.ALL)
-//    private List<PedidoProduto> pedidoProduto;
     @Column(nullable = false)
     private StatusPedido statusPedido;
 
