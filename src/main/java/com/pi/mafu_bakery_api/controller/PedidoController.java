@@ -22,7 +22,7 @@ public class PedidoController {
     private PedidoService pedidoService;
 
     @PostMapping("/realizarPedido")
-    public ResponseEntity<?> realizarPedido(@RequestBody @Valid CriacaoPedidoDTO dto) throws Exception {
+    public ResponseEntity<Pedido> realizarPedido(@RequestBody @Valid CriacaoPedidoDTO dto) throws Exception {
         return pedidoService.realizarPedido(dto);
     }
 

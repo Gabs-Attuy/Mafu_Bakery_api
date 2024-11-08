@@ -12,7 +12,6 @@ import lombok.Setter;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter @Setter

@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface IPedido {
 
-    ResponseEntity<?> realizarPedido(CriacaoPedidoDTO dto) throws Exception;
+    ResponseEntity<Pedido> realizarPedido(CriacaoPedidoDTO dto) throws Exception;
 
     void cadastraRelacionamentoPedidoEProduto(Pedido pedido, ProdutosPedidoDTO dto) throws Exception;
 
