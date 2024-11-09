@@ -16,6 +16,7 @@ public class ProdutosPedidoDTO {
 
     @NotEmpty(message = "ID do produto obrigatório!")
     private Long id;
+    private String nomeProduto;
     @NotEmpty(message = "Valor unitário obrigatório!")
     @Digits(integer = 5, fraction = 2)
     private BigDecimal valorUnitario;
