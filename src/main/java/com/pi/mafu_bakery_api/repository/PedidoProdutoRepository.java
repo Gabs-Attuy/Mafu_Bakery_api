@@ -10,11 +10,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface PedidoProdutoRepository extends JpaRepository<PedidoProduto, PedidoProdutoKey> {
-//    @Query("SELECT new com.pi.mafu_bakery_api.dto.ProdutosPedidoDTO(p.id, p.preco, pp.quantidade, pp.total) " +
-//            "FROM PedidoProduto pp " +
-//            "JOIN pp.id.produtoId p " +
-//            "WHERE pp.id.pedidoId.id = :pedidoId")
-    @Query("SELECT new com.pi.mafu_bakery_api.dto.ProdutosPedidoDTO(p.id, p.preco, pp.quantidade, pp.total, " +
+    @Query("SELECT new com.pi.mafu_bakery_api.dto.ProdutosPedidoDTO(p.id, p.nome, p.preco, pp.quantidade, pp.total, " +
             "COALESCE((SELECT ui.url FROM URLImagem ui WHERE ui.produtoId = p AND ui.principal = true), '') ) " +
             "FROM PedidoProduto pp " +
             "JOIN pp.id.produtoId p " +
