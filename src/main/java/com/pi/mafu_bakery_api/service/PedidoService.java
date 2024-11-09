@@ -40,7 +40,7 @@ public class PedidoService implements IPedido {
     private ProdutoService produtoService;
 
     @Transactional()
-    public ResponseEntity<?> realizarPedido(CriacaoPedidoDTO dto) throws Exception {
+    public ResponseEntity<Pedido> realizarPedido(CriacaoPedidoDTO dto) throws Exception {
 
         try{
             Endereco endereco = enderecoRepository.findById(dto.getEnderecoEntrega())
@@ -64,10 +64,10 @@ public class PedidoService implements IPedido {
                 cadastraRelacionamentoPedidoEProduto(pedido, produtosPedidoDTO);
             }
 
-            return new ResponseEntity<>(HttpStatus.CREATED);
+            return new ResponseEntity<>(pedido, HttpStatus.CREATED);
 
         } catch (IllegalStateException exception) {
-            return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
     }
@@ -104,4 +104,6 @@ public class PedidoService implements IPedido {
     }
         return new ResponseEntity<>(detalhesPedidos, HttpStatus.OK);
     }
+
+
 }

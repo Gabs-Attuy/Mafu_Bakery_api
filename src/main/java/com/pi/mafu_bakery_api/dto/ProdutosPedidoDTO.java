@@ -24,5 +24,6 @@ public class ProdutosPedidoDTO {
     @NotEmpty(message = "Total do produto obrigatório!")
     @Digits(integer = 5, fraction = 2)
     private BigDecimal total;
+    private String urlImagemPrincipal;
 
 }
