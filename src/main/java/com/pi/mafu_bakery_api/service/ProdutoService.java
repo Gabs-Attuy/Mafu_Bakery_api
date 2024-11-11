@@ -347,4 +347,17 @@ public class ProdutoService implements IProdutoService {
 
     }
 
+    @Transactional
+    public boolean consumirProduto(Produto produto, Integer quantidade) throws Exception {
+
+        if(produto.getQuantidadeEstoque() >= quantidade) {
+            produtoRepository.consumirProduto(produto.getId(), quantidade);
+            logger.info("Estoque atualizado com sucesso!");
+            return true;
+        } else {
+            logger.warning("Estoque insuficiente: Produto - " + produto.getNome() + ", Qtdd - " + produto.getQuantidadeEstoque());
+            return false;
+        }
+
+    }
 }

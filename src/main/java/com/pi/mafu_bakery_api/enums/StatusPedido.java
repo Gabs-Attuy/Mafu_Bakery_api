@@ -5,10 +5,10 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public enum FormaPagamentoEnum {
-    CREDITO("CREDITO"),
-    DEBITO("DEBITO"),
-    PIX("PIX");
+public enum StatusPedido {
+    AGUARDANDO_PAGAMENTO("AGUARDANDO PAGAMENTO"),
+    AGUARDANDO_ENTREGA("AGUARDANDO ENTREGA"),
+    ENTREGUE("ENTREGUE");
 
     private String status;
 }

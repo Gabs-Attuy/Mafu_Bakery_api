@@ -1,6 +1,7 @@
 package com.pi.mafu_bakery_api.service;
 
 import com.pi.mafu_bakery_api.dto.EnderecoDTO;
+import com.pi.mafu_bakery_api.enums.TipoEndereco;
 import com.pi.mafu_bakery_api.interfaces.IEndereco;
 import com.pi.mafu_bakery_api.key.EnderecoClienteKey;
 import com.pi.mafu_bakery_api.model.Cliente;
@@ -69,6 +70,7 @@ public class EnderecoService implements IEndereco {
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
+
     public ResponseEntity<List<Endereco>> retornaEnderecosCliente(Long id) {
         try {
             Cliente cliente = new Cliente();
@@ -89,6 +91,12 @@ public class EnderecoService implements IEndereco {
             System.out.println("Erro ao retornar lista de endereços: " + ex.getMessage());
         }
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    public ResponseEntity<List<Endereco>> enderecosDeEntregaPorCliente(Long id) {
+
+        return new ResponseEntity<>(enderecoClienteRepository.findEnderecosByClienteIdAndTipo(id, TipoEndereco.ENTREGA), HttpStatus.OK);
+
     }
 
     @Transactional

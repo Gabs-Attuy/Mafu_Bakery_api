@@ -34,4 +34,9 @@ public class EnderecoController {
         return enderecoService.defineEnderecoPrincipal(enderecoId, clienteId);
     }
 
+    @GetMapping("/enderecosEntrega")
+    public ResponseEntity<List<Endereco>> retornaEnderecosDeEntregaPorCliente(@RequestParam("id") Long id) {
+        return enderecoService.enderecosDeEntregaPorCliente(id);
+    }
+    
 }
