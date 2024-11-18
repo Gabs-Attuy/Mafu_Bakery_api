@@ -50,14 +50,16 @@ public class SecurityConfig {
                 "/api",
                 "/api/usuariosPorPesquisa",
                 "/api/buscaUsuario",
-                "/api/produtos/alterar"
+                "/api/produtos/alterar",
+                "/api/produtos/cadastrar"
         };
 
         final String [] ENDPOINTS_ESTOQUISTA = {
                 "/api/mp/aumentarMp",
                 "/api/mp/consumirMp",
                 "/api/produtos/confeccionaProdutos",
-                "/api/listarPedidos"
+                "/api/listarPedidos",
+                "/api/pedidos/atualizarStatus"
         };
 
         final String [] ENDPOINTS_ADMINISTRADOR_ESTOQUISTA = {
