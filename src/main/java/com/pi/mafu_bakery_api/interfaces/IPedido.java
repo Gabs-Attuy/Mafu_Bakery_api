@@ -2,6 +2,7 @@ package com.pi.mafu_bakery_api.interfaces;
 
 import com.pi.mafu_bakery_api.dto.CriacaoPedidoDTO;
 import com.pi.mafu_bakery_api.dto.DetalhesPedidoDTO;
+import com.pi.mafu_bakery_api.dto.PedidoStatusDTO;
 import com.pi.mafu_bakery_api.dto.ProdutosPedidoDTO;
 import com.pi.mafu_bakery_api.model.Pedido;
 import org.springframework.http.ResponseEntity;
@@ -15,4 +16,6 @@ public interface IPedido {
     void cadastraRelacionamentoPedidoEProduto(Pedido pedido, ProdutosPedidoDTO dto) throws Exception;
 
     ResponseEntity<List<DetalhesPedidoDTO>> listarPedidosCliente(Long clienteId);
+
+    ResponseEntity<PedidoStatusDTO> atualizarStatus(Long id, String status);
 }

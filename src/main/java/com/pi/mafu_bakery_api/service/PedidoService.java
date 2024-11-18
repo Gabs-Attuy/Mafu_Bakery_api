@@ -2,6 +2,7 @@ package com.pi.mafu_bakery_api.service;
 
 import com.pi.mafu_bakery_api.dto.CriacaoPedidoDTO;
 import com.pi.mafu_bakery_api.dto.DetalhesPedidoDTO;
+import com.pi.mafu_bakery_api.dto.PedidoStatusDTO;
 import com.pi.mafu_bakery_api.dto.ProdutosPedidoDTO;
 import com.pi.mafu_bakery_api.enums.StatusPedido;
 import com.pi.mafu_bakery_api.interfaces.IPedido;
@@ -70,6 +71,22 @@ public class PedidoService implements IPedido {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
+    }
+
+    @Transactional
+    public ResponseEntity<PedidoStatusDTO> atualizarStatus(Long id, String status) {
+        Pedido pedido = pedidoRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Pedido não encontrado."));
+
+        pedido.setStatusPedido(StatusPedido.valueOf(status));
+        try {
+            pedidoRepository.save(pedido);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        PedidoStatusDTO pedidoStatusDTO = new PedidoStatusDTO(pedido.getId(), pedido.getStatusPedido().name());
+        return new ResponseEntity<>(pedidoStatusDTO, HttpStatus.OK);
     }
 
     @Transactional
