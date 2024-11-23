@@ -193,6 +193,7 @@ public class ProdutoService implements IProdutoService {
             ExibicaoProdutoDTO dto = new ExibicaoProdutoDTO();
             dto.setId(produto.getId());
             dto.setNome(produto.getNome());
+            dto.setCategoria(produto.getCategoria());
             dto.setPreco(produto.getPreco());
             dto.setStatus(produto.getStatus());
             dto.setDescricao(produto.getDescricao());
