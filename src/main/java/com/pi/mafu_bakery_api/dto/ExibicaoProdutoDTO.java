@@ -16,6 +16,7 @@ public class ExibicaoProdutoDTO {
     private Long id;
     private String nome;
     private String descricao;
+    private String categoria;
     private Double avaliacao;
     private BigDecimal preco;
     private List<String> imagens;
