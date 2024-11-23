@@ -1,9 +1,6 @@
 package com.pi.mafu_bakery_api.service;
 
-import com.pi.mafu_bakery_api.dto.CriacaoPedidoDTO;
-import com.pi.mafu_bakery_api.dto.DetalhesPedidoDTO;
-import com.pi.mafu_bakery_api.dto.PedidoStatusDTO;
-import com.pi.mafu_bakery_api.dto.ProdutosPedidoDTO;
+import com.pi.mafu_bakery_api.dto.*;
 import com.pi.mafu_bakery_api.enums.StatusPedido;
 import com.pi.mafu_bakery_api.interfaces.IPedido;
 import com.pi.mafu_bakery_api.key.PedidoProdutoKey;
@@ -107,6 +104,7 @@ public class PedidoService implements IPedido {
             throw new IllegalStateException("Falha ao criar relacionamento por falta de produto em estoque.");
         }
     }
+
     public ResponseEntity<List<DetalhesPedidoDTO>> listarPedidosCliente(Long id) {
     List<Pedido> pedidos = pedidoRepository.findAll();
 
@@ -122,5 +120,8 @@ public class PedidoService implements IPedido {
         return new ResponseEntity<>(detalhesPedidos, HttpStatus.OK);
     }
 
+    public ResponseEntity<List<PedidosDTO>> listaPedidos() {
+        return new ResponseEntity<>(pedidoRepository.listarPedidosPorData(), HttpStatus.OK);
+    }
 
 }
