@@ -18,5 +18,14 @@ public class PedidosDTO {
     private Long id;
     private BigDecimal totalPedido;
     private StatusPedido statusPedido;
+    private String statusDescricao;
 
+    public PedidosDTO(LocalDateTime dataPedido, Long id, BigDecimal totalPedido, StatusPedido statusPedido) {
+        this.dataPedido = dataPedido;
+        this.id = id;
+        this.totalPedido = totalPedido;
+        this.statusPedido = statusPedido;
+        this.statusDescricao = statusPedido.getStatus();
+
+    }
 }
