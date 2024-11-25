@@ -12,4 +12,7 @@ public interface PedidoRepository extends JpaRepository<Pedido, Long> {
     @Query("SELECT new com.pi.mafu_bakery_api.dto.PedidosDTO(p.dataPedido, p.id, p.totalPedido, p.statusPedido)" +
             "FROM Pedido p ORDER BY p.dataPedido DESC")
     List<PedidosDTO> listarPedidosPorData();
+
+    List<Pedido> findByClienteId_Id(Long clienteId);
+
 }

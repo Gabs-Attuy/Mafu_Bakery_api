@@ -106,7 +106,7 @@ public class PedidoService implements IPedido {
     }
 
     public ResponseEntity<List<DetalhesPedidoDTO>> listarPedidosCliente(Long id) {
-    List<Pedido> pedidos = pedidoRepository.findAll();
+    List<Pedido> pedidos = pedidoRepository.findByClienteId_Id(id);
 
     List<DetalhesPedidoDTO> detalhesPedidos = new ArrayList<>();
 
