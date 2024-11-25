@@ -59,8 +59,7 @@ public class SecurityConfig {
                 "/api/mp/consumirMp",
                 "/api/produtos/confeccionaProdutos",
                 "/api/listarPedidos",
-                "/api/pedidos/atualizarStatus",
-                "/api/pedidos/listarPedidosBackOffice"
+                "/api/pedidos/atualizarStatus"
         };
 
         final String [] ENDPOINTS_ADMINISTRADOR_ESTOQUISTA = {
@@ -69,7 +68,8 @@ public class SecurityConfig {
                 "/api/produtos/recuperaProduto",
                 "/api/produtos/listagem",
                 "/api/produtos/buscarNome",
-                "/api/mp/mpPorId"
+                "/api/mp/mpPorId",
+                "/api/pedidos/listarPedidosBackOffice"
         };
 
         final String [] ENDPOINTS_CLIENTE = {
