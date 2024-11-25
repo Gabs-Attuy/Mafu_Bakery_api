@@ -1,8 +1,6 @@
 package com.pi.mafu_bakery_api.service;
 
-import com.pi.mafu_bakery_api.dto.CriacaoPedidoDTO;
-import com.pi.mafu_bakery_api.dto.DetalhesPedidoDTO;
-import com.pi.mafu_bakery_api.dto.ProdutosPedidoDTO;
+import com.pi.mafu_bakery_api.dto.*;
 import com.pi.mafu_bakery_api.enums.StatusPedido;
 import com.pi.mafu_bakery_api.interfaces.IPedido;
 import com.pi.mafu_bakery_api.key.PedidoProdutoKey;
@@ -73,6 +71,22 @@ public class PedidoService implements IPedido {
     }
 
     @Transactional
+    public ResponseEntity<PedidoStatusDTO> atualizarStatus(Long id, String status) {
+        Pedido pedido = pedidoRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Pedido não encontrado."));
+
+        pedido.setStatusPedido(StatusPedido.valueOf(status));
+        try {
+            pedidoRepository.save(pedido);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        PedidoStatusDTO pedidoStatusDTO = new PedidoStatusDTO(pedido.getId(), pedido.getStatusPedido().name());
+        return new ResponseEntity<>(pedidoStatusDTO, HttpStatus.OK);
+    }
+
+    @Transactional
     public void cadastraRelacionamentoPedidoEProduto(Pedido pedido, ProdutosPedidoDTO dto) throws Exception {
 
         Produto produto = produtoRepository.findById(dto.getId())
@@ -90,8 +104,9 @@ public class PedidoService implements IPedido {
             throw new IllegalStateException("Falha ao criar relacionamento por falta de produto em estoque.");
         }
     }
+
     public ResponseEntity<List<DetalhesPedidoDTO>> listarPedidosCliente(Long id) {
-    List<Pedido> pedidos = pedidoRepository.findAll();
+    List<Pedido> pedidos = pedidoRepository.findByClienteId_Id(id);
 
     List<DetalhesPedidoDTO> detalhesPedidos = new ArrayList<>();
 
@@ -105,5 +120,8 @@ public class PedidoService implements IPedido {
         return new ResponseEntity<>(detalhesPedidos, HttpStatus.OK);
     }
 
+    public ResponseEntity<List<PedidosDTO>> listaPedidos() {
+        return new ResponseEntity<>(pedidoRepository.listarPedidosPorData(), HttpStatus.OK);
+    }
 
 }
